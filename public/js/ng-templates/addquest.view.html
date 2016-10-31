@@ -1,0 +1,17 @@
+<div class="formContainer">
+    <form name="newSurveyForm" novalidate ng-submit="addSurvey(survey)">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">Survey Title</span>
+                <input type="text" class="form-control" name="surveyTitle" ng-model="survey.survey_topic" aria-describedby="basic-addon1">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon2">Survey Description</span>
+                <input type="text" class="form-control" name="surveyDescription" ng-model="survey.survey_description" aria-describedby="basic-addon2">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-default">submit</button>
+    </form>
+</div>
