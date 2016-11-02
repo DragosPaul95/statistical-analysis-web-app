@@ -41,6 +41,28 @@ app.post('/savesurvey', function (req, res) {
 
 });
 
+app.post('/login', function (req, res) {
+    var post = {
+        user_email: req.body.username,
+        user_password: req.body.password
+    };
+    connection.query("SELECT * FROM users WHERE user_email = ?", [req.body.username], function(err, result, fields){
+       if (!err) {
+           if(result[0] && result[0].user_email == post.user_email) {
+               if(result[0].user_password == post.user_password) {
+                   // authenticated
+                   res.sendStatus(200);
+               }
+           }
+           else {
+               res.sendStatus(401);
+           }
+       }
+        else res.sendStatus(500);
+    });
+
+});
+
 
 var server = app.listen(3000, function () {
     console.log("server started");

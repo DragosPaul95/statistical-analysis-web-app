@@ -5,10 +5,11 @@
         .module('app')
         .controller('addQuestController', addQuestController);
 
-    addQuestController.$inject = ['$scope', '$http'];
-    function addQuestController($scope, $http) {
-        $scope.survey = {};
-        $scope.addSurvey = function (surveyObject) {
+    addQuestController.$inject = ['$scope', '$http', 'Flash'];
+    function addQuestController($scope, $http, Flash) {
+        var vm = this;
+        vm.survey = {};
+        vm.addSurvey = function (surveyObject) {
             $http.post('/savesurvey', surveyObject)
                 .success(function(data) {
                     console.log(data);

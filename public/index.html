@@ -3,34 +3,35 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <base href="/">
     <title>CSIE Forms</title>
     <!-- CSS (load bootstrap) -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/angular-flash.css">
 
-    <script src="http://code.angularjs.org/1.2.13/angular.js"></script>
+    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular-cookies.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script>
+    <script src="js/lib/angular-flash.js"></script>
     <script src="js/module.js"></script>
     <script src="js/ng-controllers/addQuestController.js"></script>
     <script src="js/ng-controllers/resultsController.js"></script>
+    <script src="js/ng-controllers/loginController.js"></script>
+    <script src="js/ng-controllers/headerController.js"></script>
 </head>
 
 <!-- apply our angular app to our site -->
 <body ng-app="app">
 
-<!-- NAVIGATION -->
-<nav class="navbar navbar-inverse" role="navigation">
-    <ul class="nav navbar-nav">
-        <li><a ui-sref="newSurvey">Add Survey</a></li>
-        <li><a ui-sref="surveyResults">See Results</a></li>
-    </ul>
-</nav>
-
 <!-- MAIN CONTENT -->
 <div class="container-fluid">
 
     <!-- THIS IS WHERE WE WILL INJECT OUR CONTENT ============================== -->
-    <div ui-view></div>
+    <div ui-view="header"></div>
+    <flash-message></flash-message>
+    <div ui-view="content" class="content-pane"></div>
 
 </div>
 
