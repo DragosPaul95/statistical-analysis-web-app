@@ -1,17 +1,55 @@
-<div class="formContainer" ng-controller="addQuestController as vm">
+<md-content class="md-padding" ng-controller="addQuestController as vm">
     <form name="newSurveyForm" novalidate ng-submit="vm.addSurvey(survey)">
-        <div class="col-md-4">
-            <div class="input-group">
-                <span class="input-group-addon" id="basic-addon1">Survey Title</span>
-                <input type="text" class="form-control" name="surveyTitle" ng-model="vm.survey.survey_topic" aria-describedby="basic-addon1">
+
+        <div layout-gt-sm="row" layout-align="center center">
+            <md-input-container flex-gt-sm>
+                <label for="surveyTitle">Survey Title</label>
+                <input type="text" id="surveyTitle" name="surveyTitle" ng-model="vm.survey.survey_topic">
+            </md-input-container>
+            <md-input-container flex-gt-sm style="margin-left: 15px;">
+                <label for="surveyDescription">Survey Description</label>
+                <input type="text" id="surveyDescription" name="surveyDescription" ng-model="vm.survey.survey_description">
+            </md-input-container>
+        </div>
+        <h4 id="questionsHeader" style="">QUESTIONS</h4>
+        <div class="questionContainer" ng-repeat="question in vm.survey.questions track by $index">
+            <div layout-gt-sm="row" layout-align="center center">
+                <md-input-container flex-gt-sm class="md-block">
+                    <label for="q{{$index}}">Question Text</label>
+                    <input type="text" id="q{{$index}}" name="question{{$index}}text" ng-model="question.text">
+                </md-input-container>
+
+                <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
+                    <label for="q{{$index}}">Question Type</label>
+                    <md-select ng-model="question.type">
+                        <md-option value="singlechoice">Single Choice</md-option>
+                        <md-option value="multiplechoice">Multiple Choice</md-option>
+                        <md-option value="gridchoice">Grid Choices</md-option>
+                        <md-option value="text">Text</md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+            <div class="qChoicesCard" ng-if="question.type == 'singlechoice'" >
+                <div class="qchoice" layout-gt-sm="row" layout-align="center center" ng-repeat="choice in question.choices">
+                    <md-input-container flex-gt-sm class="md-block">
+                        <label>Value</label>
+                        <input type="text" ng-model="choice[$index].value">
+                    </md-input-container>
+                    <md-input-container flex-gt-sm class="md-block">
+                        <label>Label</label>
+                        <input type="text"  ng-model="choice[$index].label">
+                    </md-input-container>
+                    <md-button style="margin-top: -10px;" class="md-icon-button md-primary" ng-click="vm.addChoice(question.id)" aria-label="Add Choice">
+                        <md-icon md-svg-icon="icons/addchoice.svg"></md-icon>
+                    </md-button>
+                    <md-button style="margin-top: -10px;" class="md-icon-button md-primary" ng-click="vm.addChoice($index)" aria-label="Remove Choice">
+                        <md-icon md-svg-icon="icons/removechoice.svg"></md-icon>
+                    </md-button>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="input-group">
-                <span class="input-group-addon" id="basic-addon2">Survey Description</span>
-                <input type="text" class="form-control" name="surveyDescription" ng-model="vm.survey.survey_description" aria-describedby="basic-addon2">
-            </div>
+        <div layout-gt-sm="row" layout-align="center center">
+            <md-button class="md-raised" ng-click="vm.addQcard()">Add Questions</md-button>
         </div>
-        <button type="submit" class="btn btn-default">submit</button>
     </form>
-</div>
+</md-content>

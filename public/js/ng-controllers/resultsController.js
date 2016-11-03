@@ -5,8 +5,8 @@
         .module('app')
         .controller('resultsController', resultsController);
 
-    resultsController.$inject = ['$scope'];
-    function resultsController($scope) {
+    resultsController.$inject = ['$rootScope', '$scope'];
+    function resultsController($rootScope, $scope) {
         var vm = this;
     }
 

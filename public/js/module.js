@@ -1,5 +1,5 @@
 // app.js
-var app = angular.module('app', ['ui.router', 'ngCookies', 'ngFlash'])
+var app = angular.module('app', ['ui.router', 'ngCookies', 'ngFlash', 'ngMaterial'])
     .config(config)
     .run(run);
 
@@ -46,16 +46,18 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
 
 run.$inject = ['$rootScope', '$state', '$location', '$cookies'];
 function run($rootScope, $state, $location, $cookies) {
-    $rootScope.isLoggedIn = $cookies.getObject('loggedIn') || false;
-    if (!$rootScope.isLoggedIn) {
+    $rootScope.auth = $cookies.getObject('auth') || false;
+    if (!$rootScope.auth) {
         $location.path('/login');
     }
+    $rootScope.currentPage = $location.path().substring(1);
 
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
         // keep user logged in after page refresh
-        $rootScope.isLoggedIn = $cookies.getObject('loggedIn') || false;
-        if (!$rootScope.isLoggedIn) {
+        $rootScope.auth = $cookies.getObject('auth') || false;
+        if (!$rootScope.auth) {
             $state.go('login');
         }
+        $rootScope.currentPage = $location.path().substring(1);
     });
 }

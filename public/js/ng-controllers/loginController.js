@@ -15,7 +15,7 @@
                     var now = new Date(),
                     // this will set the expiration to 10 years
                     exp = new Date(now.getFullYear() + 10, now.getMonth(), now.getDate());
-                    $cookies.putObject('loggedIn', true, {expires: exp});
+                    $cookies.putObject('auth', data.auth, {expires: exp});
                     $state.go('newSurvey');
                 })
                 .error(function(data) {

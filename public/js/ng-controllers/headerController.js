@@ -10,8 +10,8 @@
         var headerVm = this;
         headerVm.user = {};
         headerVm.logout = function () {
-            $cookies.remove('loggedIn');
-            $rootScope.isLoggedIn = false;
+            $cookies.remove('auth');
+            delete $rootScope.auth;
             $location.path('/login');
         }
 

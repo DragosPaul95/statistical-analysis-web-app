@@ -1,9 +1,17 @@
 <div ng-controller="headerController as headerVm">
-    <nav class="navbar navbar-inverse" role="navigation">
+    <!--<nav class="navbar navbar-inverse" role="navigation">
         <ul class="nav navbar-nav">
             <li><a ui-sref="newSurvey">Add Survey</a></li>
             <li><a ui-sref="surveyResults">See Results</a></li>
-            <li ng-if="isLoggedIn" ng-click="headerVm.logout()"><a href="/">Log Out</a></li>
+            <li ng-if="auth.token" ng-click="headerVm.logout()"><a href="/">Log Out</a></li>
         </ul>
-    </nav>
+    </nav>-->
+    <md-content>
+        <md-nav-bar md-selected-nav-item="currentPage" nav-bar-aria-label="navigation links">
+
+            <md-nav-item md-nav-sref="newSurvey" name="addquest">Add Survey</md-nav-item>
+            <md-nav-item md-nav-sref="surveyResults" name="results">View Results</md-nav-item>
+            <md-nav-item ng-if="auth.token" md-nav-click="headerVm.logout()" name="logout">Log Out</md-nav-item>
+        </md-nav-bar>
+    </md-content>
 </div>

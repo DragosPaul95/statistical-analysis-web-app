@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mysql      = require('mysql');
-
+var crypto = require('crypto');
 var app = express();
 app.use("/", express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -12,8 +12,6 @@ var connection = mysql.createConnection({
     password : '',
     database : 'website'
 });
-
-
 
 /*app.get('/', function (request, response) {
 
@@ -46,12 +44,27 @@ app.post('/login', function (req, res) {
         user_email: req.body.username,
         user_password: req.body.password
     };
-    connection.query("SELECT * FROM users WHERE user_email = ?", [req.body.username], function(err, result, fields){
+    var token = crypto.randomBytes(20).toString('hex');
+    connection.query("SELECT * FROM users WHERE user_email = ?", [req.body.username], function(err, result){
        if (!err) {
            if(result[0] && result[0].user_email == post.user_email) {
                if(result[0].user_password == post.user_password) {
                    // authenticated
-                   res.sendStatus(200);
+                   var authObj = {
+                       userId: result[0].user_id,
+                       token: ""
+                   };
+                   connection.query("UPDATE users SET user_token = ? WHERE user_id = ?", [token, result[0].user_id], function (err, result) {
+                       if(err) { throw err;}
+                       else {
+                           authObj.token = token;
+                           res.send(JSON.stringify({
+                               status: 200,
+                               auth: authObj
+                           })
+                           );
+                       }
+                   });
                }
            }
            else {

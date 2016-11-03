@@ -1,3 +1,30 @@
+html *
+{
+    font-family: Roboto, serif !important;
+}
+
+body {
+    background: rgba(224, 224, 224, 0.45);
+}
+
 .content-pane {
-    max-width: 1200px;
+    width:80%;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 15px;
+}
+
+.qChoicesCard {
+    width:80%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#questionsHeader {
+    margin-top: -15px;
+    color: rgba(0, 0, 0, 0.63);
+}
+
+.fixSelectAlign {
+    margin-top: -0.45em;
 }
