@@ -25,8 +25,54 @@ db.connect(function(err) {
 });
 
 
+app.get('/getSurvey/:surveyID', function(req, res) {
+    var survey = {};
+    try {
+        fiber(function() {
+            var querySurvey = await(db.query('SELECT * FROM surveys WHERE survey_id = ?', req.params.surveyID, defer()));
+            survey.title = querySurvey[0].survey_topic;
+            survey.description = querySurvey[0].survey_description;
+            survey.questions = [];
+            var queryQuestions = await(db.query('SELECT * FROM survey_questions WHERE question_survey_id = ?', req.params.surveyID, defer()));
+            for(var i = 0; i < queryQuestions.length; i++) {
+                var queryChoices = await(db.query('SELECT * FROM questions_choices WHERE question_id = ?', queryQuestions[i].question_id, defer()));
+                survey.questions.push({
+                    question_id: queryQuestions[i].question_id,
+                    question_text: queryQuestions[i].question_text,
+                    question_type: queryQuestions[i].question_type,
+                    question_choices: queryChoices
+                });
+            }
+        res.send(survey);
+        });
+    } catch (err) {
+        throw err;
+    }
+
+});
+
+
 app.get('*', function(req, res) {
     res.sendFile('public/index.html', { root: __dirname });
+});
+
+app.post('/answer/:surveyID', function (req, res) {
+    var answers = req.body;
+    Object.keys(answers).forEach(function (key) {
+        var val = answers[key];
+        var insertData = {
+            answer_question_id: key,
+            answer: val
+        };
+        try {
+            fiber(function() {
+                var queryAnswer = await(db.query('INSERT INTO answers SET ?', insertData, defer()));
+            });
+        } catch (err) {
+            throw err;
+        }
+    });
+    return res.sendStatus(200);
 });
 
 app.post('/savesurvey', function (req, res) {
@@ -56,7 +102,7 @@ app.post('/savesurvey', function (req, res) {
                     };
                     var questionChoices = survey.questions[i].choices;
                     var query2 = await(db.query('INSERT INTO survey_questions SET ?', questionData, defer()));
-                    for(var ii = 1; ii < questionChoices.length; ii++){
+                    for(var ii = 0; ii < questionChoices.length; ii++){
                         var choicesData = {
                             question_id: query2.insertId,
                             choice_value: questionChoices[ii].value,

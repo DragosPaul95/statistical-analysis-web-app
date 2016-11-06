@@ -1,0 +1,31 @@
+<md-content>
+<div layout="column" ng-controller="takeQuestController as vm">
+
+    <md-toolbar md-scroll-shrink>
+        <div class="md-toolbar-tools questTitleToolbar">{{vm.survey.title}}</div>
+
+    </md-toolbar>
+
+        <md-subheader class="md-primary">{{vm.survey.description}}</md-subheader>
+        <md-divider></md-divider>
+
+        <div class="question" ng-repeat="question in vm.survey.questions track by $index">
+            <h4>{{question.question_text}}</h4>
+            <div class="questionChoices" ng-if="question.question_type == 'singlechoice'">
+                <md-radio-group ng-model="vm.surveyAnswers[question.question_id]">
+                    <md-radio-button class="md-primary" value="{{choice.choice_value}}" ng-repeat="choice in question.question_choices">{{choice.choice_label}}</md-radio-button>
+                </md-radio-group>
+            </div>
+            <div class="questionChoices" ng-if="question.question_type == 'multiplechoice'">
+                <div class="questionCheckboxes" flex="100" ng-repeat="choice in question.question_choices track by $index">
+                    <md-checkbox class="md-primary" ng-click="vm.addSelection(question.question_id, choice.choice_value)" value="{{choice.choice_value}}">
+                        {{ choice.choice_label }}
+                    </md-checkbox>
+                </div>
+            </div>
+            <md-divider></md-divider>
+        </div>
+        <md-button class="md-raised md-primary" ng-click="vm.saveAnswers(vm.surveyAnswers)">Save</md-button>
+
+</div>
+</md-content>

@@ -42,6 +42,14 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
                 }
             }
         })
+        .state('takeQuest', {
+            url: '/survey/:surveyID',
+            views:{
+                'content':{
+                    templateUrl: 'js/ng-templates/takequest.view.html',
+                }
+            }
+        })
 }
 
 run.$inject = ['$rootScope', '$state', '$location', '$cookies'];
