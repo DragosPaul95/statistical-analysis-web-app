@@ -32,7 +32,7 @@
 
         vm.addSurvey = function () {
             var data = {
-                userId:  $rootScope.auth.userId,
+                userAuth:  $rootScope.auth,
                 survey: vm.survey
             };
             $http.post('/savesurvey', data)

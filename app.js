@@ -31,34 +31,44 @@ app.get('*', function(req, res) {
 
 app.post('/savesurvey', function (req, res) {
     var survey = req.body.survey;
+    var userAuth = req.body.userAuth;
     var surveyData = {
         survey_topic: survey.survey_topic,
         survey_description: survey.survey_description,
-        survey_user_id: req.body.userId
+        survey_user_id: userAuth.userId
     };
     try {
         fiber(function() {
-            var query = await(db.query('INSERT INTO surveys SET ?', surveyData, defer()));
-            for(var i = 0; i < survey.questions.length; i++) {
-                var questionData = {
-                    question_qid: survey.questions[i].id,
-                    question_survey_id: query.insertId,
-                    question_text: survey.questions[i].text,
-                    question_type: survey.questions[i].type
-                };
-                var questionChoices = survey.questions[i].choices;
-                var query2 = await(db.query('INSERT INTO survey_questions SET ?', questionData, defer()));
-                for(var ii = 1; ii < questionChoices.length; ii++){
-                    var choicesData = {
-                        question_id: query2.insertId,
-                        choice_value: questionChoices[ii].value,
-                        choice_label: questionChoices[ii].label
+            //check token
+            var unauthorized = false;
+            var queryUser = await(db.query('SELECT user_token FROM users WHERE user_id = ?', userAuth.userId, defer()));
+            if(queryUser[0].user_token != userAuth.token) {
+                unauthorized = true;
+            }
+            if(!unauthorized) {
+                var query = await(db.query('INSERT INTO surveys SET ?', surveyData, defer()));
+                for(var i = 0; i < survey.questions.length; i++) {
+                    var questionData = {
+                        question_qid: survey.questions[i].id,
+                        question_survey_id: query.insertId,
+                        question_text: survey.questions[i].text,
+                        question_type: survey.questions[i].type
                     };
-                    var query3 = await(db.query('INSERT INTO questions_choices SET ?', choicesData, defer()));
+                    var questionChoices = survey.questions[i].choices;
+                    var query2 = await(db.query('INSERT INTO survey_questions SET ?', questionData, defer()));
+                    for(var ii = 1; ii < questionChoices.length; ii++){
+                        var choicesData = {
+                            question_id: query2.insertId,
+                            choice_value: questionChoices[ii].value,
+                            choice_label: questionChoices[ii].label
+                        };
+                        var query3 = await(db.query('INSERT INTO questions_choices SET ?', choicesData, defer()));
+                    }
                 }
             }
+            if(unauthorized) res.sendStatus(401);
+            else res.sendStatus(200);
         });
-        res.sendStatus(200);
     } catch (err) {
         res.sendStatus(500);
         throw err;
@@ -71,7 +81,7 @@ app.post('/login', function (req, res) {
         user_password: req.body.password
     };
     var token = crypto.randomBytes(20).toString('hex');
-    connection.query("SELECT * FROM users WHERE user_email = ?", [req.body.username], function(err, result){
+    db.query("SELECT * FROM users WHERE user_email = ?", [req.body.username], function(err, result){
        if (!err) {
            if(result[0] && result[0].user_email == post.user_email) {
                if(result[0].user_password == post.user_password) {
@@ -80,7 +90,7 @@ app.post('/login', function (req, res) {
                        userId: result[0].user_id,
                        token: ""
                    };
-                   connection.query("UPDATE users SET user_token = ? WHERE user_id = ?", [token, result[0].user_id], function (err, result) {
+                   db.query("UPDATE users SET user_token = ? WHERE user_id = ?", [token, result[0].user_id], function (err, result) {
                        if(err) { throw err;}
                        else {
                            authObj.token = token;
