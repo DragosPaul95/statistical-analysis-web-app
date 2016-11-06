@@ -2,41 +2,67 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mysql      = require('mysql');
 var crypto = require('crypto');
+var sync = require('synchronize');
+var fiber = sync.fiber;
+var await = sync.await;
+var defer = sync.defer;
+
 var app = express();
 app.use("/", express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-var connection = mysql.createConnection({
+var db = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
     password : '',
     database : 'website'
 });
 
-/*app.get('/', function (request, response) {
+db.connect(function(err) {
+    if (err) {
+        console.error('error connecting: ' + err.stack);
+    }
+});
 
-    connection.query('SELECT * FROM surveys', function(err, rows, fields) {
-        if (err) throw err;
-
-        response.send(rows);
-    });
-});*/
 
 app.get('*', function(req, res) {
     res.sendFile('public/index.html', { root: __dirname });
 });
 
 app.post('/savesurvey', function (req, res) {
-    var post = {
-        survey_topic: req.body.survey_topic,
-        survey_description: req.body.survey_description,
-        survey_client_id: 1
+    var survey = req.body.survey;
+    var surveyData = {
+        survey_topic: survey.survey_topic,
+        survey_description: survey.survey_description,
+        survey_user_id: req.body.userId
     };
-    connection.query("INSERT INTO surveys SET ?", post, function(err, result){
-       if (!err) res.sendStatus(200);
-        else res.sendStatus(500);
-    });
-
+    try {
+        fiber(function() {
+            var query = await(db.query('INSERT INTO surveys SET ?', surveyData, defer()));
+            for(var i = 0; i < survey.questions.length; i++) {
+                var questionData = {
+                    question_qid: survey.questions[i].id,
+                    question_survey_id: query.insertId,
+                    question_text: survey.questions[i].text,
+                    question_type: survey.questions[i].type
+                };
+                var questionChoices = survey.questions[i].choices;
+                var query2 = await(db.query('INSERT INTO survey_questions SET ?', questionData, defer()));
+                for(var ii = 1; ii < questionChoices.length; ii++){
+                    var choicesData = {
+                        question_id: query2.insertId,
+                        choice_value: questionChoices[ii].value,
+                        choice_label: questionChoices[ii].label
+                    };
+                    var query3 = await(db.query('INSERT INTO questions_choices SET ?', choicesData, defer()));
+                }
+            }
+        });
+        res.sendStatus(200);
+    } catch (err) {
+        res.sendStatus(500);
+        throw err;
+    }
 });
 
 app.post('/login', function (req, res) {

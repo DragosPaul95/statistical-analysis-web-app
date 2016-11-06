@@ -1,10 +1,16 @@
+html {
+    height: 100%;
+}
 html *
 {
     font-family: Roboto, serif !important;
 }
 
 body {
-    background: rgba(224, 224, 224, 0.45);
+    background-color: #efefef;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .content-pane {
@@ -27,4 +33,11 @@ body {
 
 .fixSelectAlign {
     margin-top: -0.45em;
+}
+
+.saveButton {
+    border-radius: 5px;
+    margin-top: 50px;
+    padding: 5px;
+    border: 1px solid #e2e1e1;
 }

@@ -30,19 +30,21 @@
                 </md-input-container>
             </div>
             <div class="qChoicesCard" ng-if="question.type == 'singlechoice'" >
-                <div class="qchoice" layout-gt-sm="row" layout-align="center center" ng-repeat="choice in question.choices">
+                <div class="qchoice" layout-gt-sm="row" layout-align="center center" ng-repeat="choice in question.choices track by $index">
                     <md-input-container flex-gt-sm class="md-block">
                         <label>Value</label>
-                        <input type="text" ng-model="choice[$index].value">
+                        <input type="text" ng-model="choice.value">
                     </md-input-container>
                     <md-input-container flex-gt-sm class="md-block">
                         <label>Label</label>
-                        <input type="text"  ng-model="choice[$index].label">
+                        <input type="text"  ng-model="choice.label">
                     </md-input-container>
-                    <md-button style="margin-top: -10px;" class="md-icon-button md-primary" ng-click="vm.addChoice(question.id)" aria-label="Add Choice">
+                </div>
+                <div class="addRemoveButtons" layout-gt-sm="row" layout-align="center center">
+                    <md-button style="margin-top: -10px;" class="md-icon-button md-primary" ng-click="vm.addChoice(question.id, choice)" aria-label="Add Choice">
                         <md-icon md-svg-icon="icons/addchoice.svg"></md-icon>
                     </md-button>
-                    <md-button style="margin-top: -10px;" class="md-icon-button md-primary" ng-click="vm.addChoice($index)" aria-label="Remove Choice">
+                    <md-button style="margin-top: -10px;" class="md-icon-button md-primary" ng-click="vm.survey.questions[$index].choices.pop()" aria-label="Remove Choice">
                         <md-icon md-svg-icon="icons/removechoice.svg"></md-icon>
                     </md-button>
                 </div>
@@ -52,4 +54,7 @@
             <md-button class="md-raised" ng-click="vm.addQcard()">Add Questions</md-button>
         </div>
     </form>
+    <div class="saveButton" layout-gt-sm="row" layout-align="center center">
+        <md-button class="md-raised" ng-click="vm.addSurvey()">Save Survey</md-button>
+    </div>
 </md-content>
