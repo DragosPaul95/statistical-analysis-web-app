@@ -1,1 +1,22 @@
-<p> ya it work</p>
+<div ng-controller="resultsController as vm">
+
+    <md-content class="md-padding" layout="column" ng-repeat="survey in vm.surveys">
+        <div flex-xs flex-gt-xs="50" layout="column">
+            <md-card class="surveyResultsContainer">
+                <md-card-title>
+                    <md-card-title-text>
+                        <span class="md-headline">{{survey.title}}</span>
+                        <span class="md-subhead">{{survey.description}}</span>
+                    </md-card-title-text>
+                    <md-card-title-media>
+                        <div class="md-media-md card-media">{{survey.date}}</div>
+                    </md-card-title-media>
+                </md-card-title>
+                <md-card-actions class="surveyResultsButton" layout="row" layout-align="center">
+                    <md-button class="md-raised">View Analysis</md-button>
+                </md-card-actions>
+            </md-card>
+        </div>
+    </md-content>
+
+</div>

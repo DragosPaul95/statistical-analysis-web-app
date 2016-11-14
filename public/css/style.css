@@ -49,3 +49,13 @@ body {
 .question, .questionChoices {
     padding: 15px;
 }
+
+.surveyResultsButton {
+    padding: 5px;
+}
+
+.surveyResultsContainer {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}

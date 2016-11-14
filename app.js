@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mysql      = require('mysql');
 var crypto = require('crypto');
+var bcrypt = require('bcrypt');
 var sync = require('synchronize');
 var fiber = sync.fiber;
 var await = sync.await;
@@ -12,7 +13,8 @@ app.use("/", express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 var db = mysql.createConnection({
-    host     : 'localhost',
+    //localhost if internet, 127.0.0.1 if no internet
+    host     : '127.0.0.1',
     user     : 'root',
     password : '',
     database : 'website'
@@ -24,6 +26,22 @@ db.connect(function(err) {
     }
 });
 
+
+app.get('/answercount/:surveyID', function(req, res) {
+    try {
+        fiber(function() {
+            var sql =   "SELECT FLOOR( (COUNT(a.answer_id)) / COUNT(DISTINCT(sq.question_id) ) ) as answers FROM answers a " +
+                        "JOIN survey_questions sq ON a.answer_question_id = sq.question_id " +
+                        "JOIN surveys s ON sq.question_survey_id = sq.question_survey_id " +
+                        "WHERE s.survey_id = ?";
+            var queryAnswers = await(db.query(sql, req.params.surveyID, defer()));
+            res.send(queryAnswers[0]);
+        });
+    } catch (err) {
+        throw err;
+    }
+
+});
 
 app.get('/getSurvey/:surveyID', function(req, res) {
     var survey = {};
@@ -51,6 +69,42 @@ app.get('/getSurvey/:surveyID', function(req, res) {
 
 });
 
+
+app.post('/surveysByUser', function(req, res) {
+    var userAuth = req.body.userAuth;
+    try {
+        fiber(function() {
+            var surveyIterator, questionsIterator;
+            var userQuests = [];
+            var surveyCountPerUser = await(db.query('SELECT survey_id FROM surveys WHERE survey_user_id = ?', userAuth.userId, defer()));
+            for(surveyIterator = 0; surveyIterator < surveyCountPerUser.length; surveyIterator++) {
+                var survey = {};
+                var querySurvey = await(db.query('SELECT * FROM surveys WHERE survey_id = ?', surveyCountPerUser[surveyIterator].survey_id, defer()));
+                survey.id = surveyCountPerUser[surveyIterator].survey_id;
+                survey.title = querySurvey[0].survey_topic;
+                survey.description = querySurvey[0].survey_description;
+                survey.date = querySurvey[0].survey_datetime;
+                survey.questions = [];
+                var queryQuestions = await(db.query('SELECT * FROM survey_questions WHERE question_survey_id = ?', surveyCountPerUser[surveyIterator].survey_id, defer()));
+                for(questionsIterator = 0; questionsIterator < queryQuestions.length; questionsIterator++) {
+                    var queryChoices = await(db.query('SELECT * FROM questions_choices WHERE question_id = ?', queryQuestions[questionsIterator].question_id, defer()));
+                    survey.questions.push({
+                        question_id: queryQuestions[questionsIterator].question_id,
+                        question_text: queryQuestions[questionsIterator].question_text,
+                        question_type: queryQuestions[questionsIterator].question_type,
+                        question_choices: queryChoices
+                    });
+                }
+                userQuests.push(survey);
+            }
+            res.send(userQuests);
+
+        });
+    } catch (err) {
+        throw err;
+    }
+
+});
 
 app.get('*', function(req, res) {
     res.sendFile('public/index.html', { root: __dirname });
@@ -81,7 +135,8 @@ app.post('/savesurvey', function (req, res) {
     var surveyData = {
         survey_topic: survey.survey_topic,
         survey_description: survey.survey_description,
-        survey_user_id: userAuth.userId
+        survey_user_id: userAuth.userId,
+        survey_datetime: new Date()
     };
     try {
         fiber(function() {
