@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mysql      = require('mysql');
 var crypto = require('crypto');
-var bcrypt = require('bcrypt');
+//var bcrypt = require('bcrypt');
 var sync = require('synchronize');
 var fiber = sync.fiber;
 var await = sync.await;
@@ -26,22 +26,6 @@ db.connect(function(err) {
     }
 });
 
-
-app.get('/answercount/:surveyID', function(req, res) {
-    try {
-        fiber(function() {
-            var sql =   "SELECT FLOOR( (COUNT(a.answer_id)) / COUNT(DISTINCT(sq.question_id) ) ) as answers FROM answers a " +
-                        "JOIN survey_questions sq ON a.answer_question_id = sq.question_id " +
-                        "JOIN surveys s ON sq.question_survey_id = sq.question_survey_id " +
-                        "WHERE s.survey_id = ?";
-            var queryAnswers = await(db.query(sql, req.params.surveyID, defer()));
-            res.send(queryAnswers[0]);
-        });
-    } catch (err) {
-        throw err;
-    }
-
-});
 
 app.get('/getSurvey/:surveyID', function(req, res) {
     var survey = {};
@@ -69,6 +53,34 @@ app.get('/getSurvey/:surveyID', function(req, res) {
 
 });
 
+app.get('/questionstats/:questionId', function(req, res) {
+    try {
+        fiber(function() {
+            var iterator;
+            var finalAnswerObj = {};
+            var labelsObj = {};
+            var queryQuestion = await(db.query('SELECT * FROM survey_questions WHERE question_id = ?', req.params.questionId, defer()))[0];
+            var queryQuestionLabels = await(db.query('SELECT choice_value, choice_label FROM `questions_choices` WHERE question_id = ?', req.params.questionId, defer()));
+            for(iterator = 0; iterator<queryQuestionLabels.length; iterator++) {
+                labelsObj[queryQuestionLabels[iterator].choice_value] = queryQuestionLabels[iterator].choice_label;
+            }
+            var queryAnswers = await(db.query('SELECT answer, COUNT(answer) as count FROM `answers` WHERE answer_question_id = ? GROUP BY answer', req.params.questionId, defer()));
+            var totalAnswers = 0;
+            for(iterator = 0; iterator<queryAnswers.length; iterator++) {
+                totalAnswers += queryAnswers[iterator].count;
+            }
+            for(iterator = 0; iterator<queryAnswers.length; iterator++) {
+                finalAnswerObj[labelsObj[queryAnswers[iterator].answer]] = queryAnswers[iterator].count/totalAnswers;
+            }
+            res.send(finalAnswerObj);
+        });
+    } catch (err) {
+        throw err;
+    }
+
+});
+
+
 
 app.post('/surveysByUser', function(req, res) {
     var userAuth = req.body.userAuth;
@@ -80,6 +92,7 @@ app.post('/surveysByUser', function(req, res) {
             for(surveyIterator = 0; surveyIterator < surveyCountPerUser.length; surveyIterator++) {
                 var survey = {};
                 var querySurvey = await(db.query('SELECT * FROM surveys WHERE survey_id = ?', surveyCountPerUser[surveyIterator].survey_id, defer()));
+                survey.total_answers = await(db.query('SELECT FLOOR(COUNT(a.answer_id)/COUNT(DISTINCT a.answer_question_id)) as total_answers FROM `answers` a JOIN survey_questions sq ON sq.question_id=a.answer_question_id JOIN surveys s ON s.survey_id = sq.question_survey_id WHERE s.survey_id = ?', surveyCountPerUser[surveyIterator].survey_id, defer()))[0].total_answers;
                 survey.id = surveyCountPerUser[surveyIterator].survey_id;
                 survey.title = querySurvey[0].survey_topic;
                 survey.description = querySurvey[0].survey_description;
@@ -113,14 +126,16 @@ app.get('*', function(req, res) {
 app.post('/answer/:surveyID', function (req, res) {
     var answers = req.body;
     Object.keys(answers).forEach(function (key) {
-        var val = answers[key];
-        var insertData = {
-            answer_question_id: key,
-            answer: val
-        };
+        var splitValues = answers[key].split(',');
         try {
             fiber(function() {
-                var queryAnswer = await(db.query('INSERT INTO answers SET ?', insertData, defer()));
+                for(var i = 0; i < splitValues.length; i++) {
+                    var insertData = {
+                        answer_question_id: key,
+                        answer: splitValues[i]
+                    };
+                    var queryAnswer = await(db.query('INSERT INTO answers SET ?', insertData, defer()));
+                }
             });
         } catch (err) {
             throw err;

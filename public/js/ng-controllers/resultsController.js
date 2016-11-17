@@ -15,15 +15,7 @@
         $http.post('/surveysByUser', data)
             .success(function(data) {
                 vm.surveys = data;
-                for(var i=0; i<vm.surveys.length; i++) {
-                    $http.get('/answerscount/' + vm.surveys[i].id)
-                        .success(function(data) {
-                            vm.surveys[i].answers = data;
-                        })
-                        .error(function(data) {
-                            console.log('Error: ' + data);
-                        });
-                }
+
             })
             .error(function(data) {
                 console.log('Error: ' + data);

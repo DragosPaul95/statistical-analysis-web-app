@@ -42,6 +42,17 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
                 }
             }
         })
+        .state('surveyStats', {
+            url: '/stats/:surveyId',
+            views:{
+                'content':{
+                    templateUrl: 'js/ng-templates/surveystats.view.html',
+                },
+                'header':{
+                    templateUrl:'js/ng-templates/navbar.view.html',
+                }
+            }
+        })
         .state('takeQuest', {
             url: '/survey/:surveyID',
             views:{

@@ -59,3 +59,11 @@ body {
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
+
+.totalAnswers {
+    padding: 5px;
+    text-align: center;
+    color: green;
+    font-weight: 700;
+    font-size: 20px;
+}
