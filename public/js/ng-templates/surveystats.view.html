@@ -1,4 +1,22 @@
 <div ng-controller="surveyStatsController as vm">
 
+    <md-content class="md-padding" layout="column">
+        <md-toolbar md-scroll-shrink>
+            <div class="md-toolbar-tools questTitleToolbar">{{vm.survey.title}}</div>
+        </md-toolbar>
+        <md-subheader class="md-primary">{{vm.survey.description}}</md-subheader>
+        <div flex-xs flex-gt-xs="50" layout="column" ng-repeat="question in vm.survey.questions track by $index">
+            <md-card class="surveyResultsContainer">
+                <md-card-title>
+                    <md-card-title-text>
+                        <span class="md-headline text-center">{{question.question_text}}</span>
+                    </md-card-title-text>
+                </md-card-title>
+                <div style="height: 600px; width: 100%;" ng-if="vm.amChartOptions[question.question_id]">
+                    <am-chart id="chart{{question.question_id}}" options="vm.amChartOptions[question.question_id]"></am-chart>
+                </div>
+            </md-card>
+        </div>
+    </md-content>
 
 </div>

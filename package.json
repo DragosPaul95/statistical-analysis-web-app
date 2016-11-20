@@ -12,6 +12,7 @@
     "angular-cookies": "^1.2.13",
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
+    "chart.js": "^2.4.0",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "multer": "^1.2.0",

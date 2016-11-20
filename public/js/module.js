@@ -1,5 +1,5 @@
 // app.js
-var app = angular.module('app', ['ui.router', 'ngCookies', 'ngFlash', 'ngMaterial'])
+var app = angular.module('app', ['ui.router', 'ngCookies', 'ngFlash', 'ngMaterial', 'amChartsDirective'])
     .config(config)
     .run(run);
 
@@ -43,7 +43,7 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
             }
         })
         .state('surveyStats', {
-            url: '/stats/:surveyId',
+            url: '/stats/:surveyID',
             views:{
                 'content':{
                     templateUrl: 'js/ng-templates/surveystats.view.html',

@@ -17,7 +17,7 @@ var db = mysql.createConnection({
     host     : '127.0.0.1',
     user     : 'root',
     password : '',
-    database : 'website'
+    database : 'student_forms'
 });
 
 db.connect(function(err) {
@@ -32,7 +32,7 @@ app.get('/getSurvey/:surveyID', function(req, res) {
     try {
         fiber(function() {
             var querySurvey = await(db.query('SELECT * FROM surveys WHERE survey_id = ?', req.params.surveyID, defer()));
-            survey.title = querySurvey[0].survey_topic;
+            survey.title = querySurvey[0].survey_title;
             survey.description = querySurvey[0].survey_description;
             survey.questions = [];
             var queryQuestions = await(db.query('SELECT * FROM survey_questions WHERE question_survey_id = ?', req.params.surveyID, defer()));
@@ -57,7 +57,7 @@ app.get('/questionstats/:questionId', function(req, res) {
     try {
         fiber(function() {
             var iterator;
-            var finalAnswerObj = {};
+            var answersObj = [];
             var labelsObj = {};
             var queryQuestion = await(db.query('SELECT * FROM survey_questions WHERE question_id = ?', req.params.questionId, defer()))[0];
             var queryQuestionLabels = await(db.query('SELECT choice_value, choice_label FROM `questions_choices` WHERE question_id = ?', req.params.questionId, defer()));
@@ -70,9 +70,14 @@ app.get('/questionstats/:questionId', function(req, res) {
                 totalAnswers += queryAnswers[iterator].count;
             }
             for(iterator = 0; iterator<queryAnswers.length; iterator++) {
-                finalAnswerObj[labelsObj[queryAnswers[iterator].answer]] = queryAnswers[iterator].count/totalAnswers;
+                answersObj.push({
+                   "option":  labelsObj[queryAnswers[iterator].answer],
+                    "value": ( (queryAnswers[iterator].count/totalAnswers)*100).toFixed(2)
+                });
             }
-            res.send(finalAnswerObj);
+            queryQuestion.totalAnswers = totalAnswers;
+            queryQuestion.answers = answersObj;
+            res.send(queryQuestion);
         });
     } catch (err) {
         throw err;
@@ -94,7 +99,7 @@ app.post('/surveysByUser', function(req, res) {
                 var querySurvey = await(db.query('SELECT * FROM surveys WHERE survey_id = ?', surveyCountPerUser[surveyIterator].survey_id, defer()));
                 survey.total_answers = await(db.query('SELECT FLOOR(COUNT(a.answer_id)/COUNT(DISTINCT a.answer_question_id)) as total_answers FROM `answers` a JOIN survey_questions sq ON sq.question_id=a.answer_question_id JOIN surveys s ON s.survey_id = sq.question_survey_id WHERE s.survey_id = ?', surveyCountPerUser[surveyIterator].survey_id, defer()))[0].total_answers;
                 survey.id = surveyCountPerUser[surveyIterator].survey_id;
-                survey.title = querySurvey[0].survey_topic;
+                survey.title = querySurvey[0].survey_title;
                 survey.description = querySurvey[0].survey_description;
                 survey.date = querySurvey[0].survey_datetime;
                 survey.questions = [];
@@ -148,7 +153,7 @@ app.post('/savesurvey', function (req, res) {
     var survey = req.body.survey;
     var userAuth = req.body.userAuth;
     var surveyData = {
-        survey_topic: survey.survey_topic,
+        survey_title: survey.survey_title,
         survey_description: survey.survey_description,
         survey_user_id: userAuth.userId,
         survey_datetime: new Date()
@@ -200,7 +205,7 @@ app.post('/login', function (req, res) {
     db.query("SELECT * FROM users WHERE user_email = ?", [req.body.username], function(err, result){
        if (!err) {
            if(result[0] && result[0].user_email == post.user_email) {
-               if(result[0].user_password == post.user_password) {
+               if(result[0].user_password_hash == post.user_password) {
                    // authenticated
                    var authObj = {
                        userId: result[0].user_id,
