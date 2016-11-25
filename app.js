@@ -53,6 +53,37 @@ app.get('/getSurvey/:surveyID', function(req, res) {
 
 });
 
+app.get('/getstats/:questionId', function (req,res) {
+    try {
+        fiber(function() {
+            var questionStatistics = {};
+            var getStandardDeviation = function () {
+                var queryAnswers = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.questionId, defer()));
+                var sum = queryAnswers.reduce(function(a, b) {
+                    return {answer: parseInt(a.answer) + parseInt(b.answer)};
+                });
+                var avg = sum.answer / queryAnswers.length;
+                var sumOfSquares = 0 ;
+                for(var i = 0, len=queryAnswers.length; i<len; i++) {
+                    sumOfSquares += Math.pow((queryAnswers[i].answer-avg), 2);
+                }
+                //bessel correction(n-1) when using sample mean
+                var variance = sumOfSquares/(queryAnswers.length-1);
+                questionStatistics.stdev = (Math.sqrt(variance)).toFixed(6);
+            };
+
+            getStandardDeviation();
+
+            res.send({
+                questionId: req.params.questionId,
+                stats: questionStatistics
+            });
+        });
+    } catch (err) {
+        throw err;
+    }
+});
+
 app.get('/questionstats/:questionId', function(req, res) {
     try {
         fiber(function() {
@@ -72,7 +103,8 @@ app.get('/questionstats/:questionId', function(req, res) {
             for(iterator = 0; iterator<queryAnswers.length; iterator++) {
                 answersObj.push({
                    "option":  labelsObj[queryAnswers[iterator].answer],
-                    "value": ( (queryAnswers[iterator].count/totalAnswers)*100).toFixed(2)
+                    "valuePercentage": ( (queryAnswers[iterator].count/totalAnswers)*100).toFixed(2),
+                    "valueRaw": queryAnswers[iterator].count
                 });
             }
             queryQuestion.totalAnswers = totalAnswers;
@@ -82,7 +114,6 @@ app.get('/questionstats/:questionId', function(req, res) {
     } catch (err) {
         throw err;
     }
-
 });
 
 

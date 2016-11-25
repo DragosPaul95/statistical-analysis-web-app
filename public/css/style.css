@@ -67,3 +67,8 @@ body {
     font-weight: 700;
     font-size: 20px;
 }
+
+.questionStatsDiv {
+    padding: 40px;
+    border-top: 1px solid #ccc;
+}
