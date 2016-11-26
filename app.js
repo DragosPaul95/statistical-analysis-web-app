@@ -53,6 +53,39 @@ app.get('/getSurvey/:surveyID', function(req, res) {
 
 });
 
+app.get('/correlation/:questionId1/:questionId2', function (req,res) {
+    try {
+        fiber(function() {
+            var queryAnswers1 = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.questionId1, defer()));
+            var queryAnswers2 = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.questionId2, defer()));
+            var xMean, yMean;
+            var sumX = 0;
+            var sumY = 0;
+            var sumUpper = 0;
+            var sumYMsq = 0;
+            var sumXMsq = 0;
+            for(var i = 0; i < queryAnswers1.length; i++) {
+                sumX += parseInt(queryAnswers1[i].answer);
+                sumY += parseInt(queryAnswers2[i].answer);
+            }
+            xMean = sumX/queryAnswers1.length;
+            yMean = sumY/queryAnswers2.length;
+
+            for(var i = 0; i < queryAnswers1.length; i++) {
+                sumUpper += (parseInt(queryAnswers1[i].answer)-xMean) * (parseInt(queryAnswers2[i].answer)-yMean);
+                sumXMsq += Math.pow( parseInt(queryAnswers1[i].answer) - xMean  ,2);
+                sumYMsq += Math.pow( parseInt(queryAnswers2[i].answer) - yMean  ,2);
+            }
+            var pearsonR = sumUpper / (Math.sqrt(sumXMsq) * Math.sqrt(sumYMsq));
+            res.send({
+                pearsonCoefficient: pearsonR
+            })
+        });
+    } catch (err) {
+        throw err;
+    }
+});
+
 app.get('/getstats/:questionId', function (req,res) {
     try {
         fiber(function() {
