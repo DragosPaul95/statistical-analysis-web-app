@@ -72,3 +72,8 @@ body {
     padding: 40px;
     border-top: 1px solid #ccc;
 }
+
+.correlationDiv, .correlationValue {
+    padding: 5px;
+    margin-top: 10px;
+}

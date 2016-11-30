@@ -87,7 +87,51 @@
         });
 
 
-
+        vm.calculateCorrelation = function (questionId1, questionId2) {
+            $http({
+                method: 'GET',
+                url: '/correlation/' + questionId1 + "/" + questionId2
+            }).then(function successCallback(response) {
+                vm.surveyStats[response.data.questionId].pearsonCoefficient = response.data.pearsonCoefficient;
+                var chart = AmCharts.makeChart("chartdiv" + questionId1, {
+                    "type": "xy",
+                    "theme": "light",
+                    "autoMarginOffset": 20,
+                    "dataProvider": response.data.scatterPlotValues,
+                    "valueAxes": [{
+                        "position": "bottom",
+                        "axisAlpha": 0,
+                        "dashLength": 1,
+                        "title": "X Axis"
+                    }, {
+                        "axisAlpha": 0,
+                        "dashLength": 1,
+                        "position": "left",
+                        "title": "Y Axis"
+                    }],
+                    "startDuration": 1,
+                    "graphs": [{
+                        "balloonText": "x:[[x]] y:[[y]]",
+                        "bullet": "round",
+                        "minBulletSize": 10,
+                        "lineAlpha": 0,
+                        "xField": "ax",
+                        "yField": "ay",
+                        "lineColor": "#FF6600",
+                        "fillAlphas": 0
+                    }],
+                    "marginLeft": 64,
+                    "marginBottom": 60,
+                    "export": {
+                        "enabled": true,
+                        "position": "bottom-right"
+                    }
+                });
+                console.log("test");
+            }, function errorCallback(response) {
+                console.log('Error: ' + response);
+            });
+        }
     }
 
 })();

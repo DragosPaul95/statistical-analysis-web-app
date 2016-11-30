@@ -32,6 +32,27 @@
                             <td>8.99</td>
                         </tr>
                     </table>
+                    <div class="correlationDiv">
+                        <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
+                            <label>Calculate Pearson correlation coefficient with:</label>
+                            <md-select ng-change="vm.calculateCorrelation(question.question_id, question.correlationWith)" ng-model="question.correlationWith">
+                                <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                        <div class="correlationValue" ng-if="vm.surveyStats[question.question_id].pearsonCoefficient">
+                            <p>The Pearson correlation coefficient with the selected question is: <strong>{{vm.surveyStats[question.question_id].pearsonCoefficient}}</strong></p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == -1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect downhill (negative) linear relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient < -1 && vm.surveyStats[question.question_id].pearsonCoefficient > -0.7">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a strong downhill (negative) linear relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient > -0.7 && vm.surveyStats[question.question_id].pearsonCoefficient < -0.3">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a moderate downhill (negative) relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >-0.3 && vm.surveyStats[question.question_id].pearsonCoefficient<0">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a weak downhill (negative) linear relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 0">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is no linear relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0 && vm.surveyStats[question.question_id].pearsonCoefficient< 0.3">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a weak uphill (positive) linear relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.3 && vm.surveyStats[question.question_id].pearsonCoefficient<0.7">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a moderate uphill (positive) linear relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.7 && vm.surveyStats[question.question_id].pearsonCoefficient<1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect downhill (negative) linear relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect uphill (positive) linear relationship between the answers of the two selected questions.</p>
+                        </div>
+                        <div id="chartdiv{{question.question_id}}" style="height: 400px;width: 100%;"></div>
+                    </div>
                 </div>
             </md-card>
         </div>

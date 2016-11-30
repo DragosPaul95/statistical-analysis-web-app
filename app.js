@@ -64,9 +64,14 @@ app.get('/correlation/:questionId1/:questionId2', function (req,res) {
             var sumUpper = 0;
             var sumYMsq = 0;
             var sumXMsq = 0;
+            var scatterPlotValues = [];
             for(var i = 0; i < queryAnswers1.length; i++) {
                 sumX += parseInt(queryAnswers1[i].answer);
                 sumY += parseInt(queryAnswers2[i].answer);
+                scatterPlotValues.push({
+                    "ax": parseInt(queryAnswers1[i].answer),
+                    "ay": parseInt(queryAnswers2[i].answer)
+                });
             }
             xMean = sumX/queryAnswers1.length;
             yMean = sumY/queryAnswers2.length;
@@ -78,7 +83,9 @@ app.get('/correlation/:questionId1/:questionId2', function (req,res) {
             }
             var pearsonR = sumUpper / (Math.sqrt(sumXMsq) * Math.sqrt(sumYMsq));
             res.send({
-                pearsonCoefficient: pearsonR
+                questionId: req.params.questionId1,
+                pearsonCoefficient: pearsonR,
+                scatterPlotValues: scatterPlotValues
             })
         });
     } catch (err) {
