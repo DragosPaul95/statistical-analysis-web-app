@@ -73,7 +73,15 @@ body {
     border-top: 1px solid #ccc;
 }
 
-.correlationDiv, .correlationValue {
-    padding: 5px;
+.correlationValue {
     margin-top: 10px;
+}
+.correlationDiv, .regressionDiv {
+    margin-bottom: 30px;
+    margin-top: 30px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+md-input-container .md-errors-spacer {
+    min-height: 0;
 }

@@ -96,6 +96,7 @@ app.get('/regression/:qId1/:qId2', function(req, res) {
             var bVal = eq3.solveFor("b");
 
             res.send({
+                "questionId": req.params.qId1,
                 "a": aVal.numer / aVal.denom,
                 "b": bVal.numer / bVal.denom
             });
@@ -303,14 +304,17 @@ app.post('/savesurvey', function (req, res) {
                     };
                     var questionChoices = survey.questions[i].choices;
                     var query2 = await(db.query('INSERT INTO survey_questions SET ?', questionData, defer()));
-                    for(var ii = 0; ii < questionChoices.length; ii++){
-                        var choicesData = {
-                            question_id: query2.insertId,
-                            choice_value: questionChoices[ii].value,
-                            choice_label: questionChoices[ii].label
-                        };
-                        var query3 = await(db.query('INSERT INTO questions_choices SET ?', choicesData, defer()));
+                    if(questionData.question_type != "text") {
+                        for(var ii = 0; ii < questionChoices.length; ii++){
+                            var choicesData = {
+                                question_id: query2.insertId,
+                                choice_value: questionChoices[ii].value,
+                                choice_label: questionChoices[ii].label
+                            };
+                            var query3 = await(db.query('INSERT INTO questions_choices SET ?', choicesData, defer()));
+                        }
                     }
+
                 }
             }
             if(unauthorized) res.sendStatus(401);

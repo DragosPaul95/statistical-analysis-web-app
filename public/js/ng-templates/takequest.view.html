@@ -23,6 +23,12 @@
                     </md-checkbox>
                 </div>
             </div>
+            <div class="questionChoices" ng-if="question.question_type == 'text'">
+                <md-input-container>
+                    <label>{{question.question_text}}</label>
+                    <input ng-model="vm.surveyAnswers[question.question_id]">
+                </md-input-container>
+            </div>
             <md-divider></md-divider>
         </div>
         <md-button class="md-raised md-primary" ng-click="vm.saveAnswers(vm.surveyAnswers)">Save</md-button>

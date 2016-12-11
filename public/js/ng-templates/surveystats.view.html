@@ -27,22 +27,21 @@
                         </thead>
                         <tr>
                             <td>{{vm.surveyStats[question.question_id].stdev}}</td>
-                            <td>69.69</td>
-                            <td>5.69</td>
-                            <td>8.99</td>
                         </tr>
                     </table>
+                    <md-divider></md-divider>
                     <div class="correlationDiv">
                         <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
                             <label>View correlation with question: </label>
                             <md-select ng-change="vm.calculateCorrelation(question.question_id, question.correlationWith)" ng-model="question.correlationWith">
+                                <md-option ng-value="999"></md-option>
                                 <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
                             </md-select>
                         </md-input-container>
-                        <div class="correlationValue" ng-if="vm.surveyStats[question.question_id].pearsonCoefficient">
+                        <div class="correlationValue" ng-if="vm.surveyStats[question.question_id].pearsonCoefficient && question.correlationWith != 999">
                             <p>The Pearson correlation coefficient with the selected question is: <strong>{{vm.surveyStats[question.question_id].pearsonCoefficient}}</strong></p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == -1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect downhill (negative) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient < -1 && vm.surveyStats[question.question_id].pearsonCoefficient > -0.7">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a strong downhill (negative) linear relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient > -1 && vm.surveyStats[question.question_id].pearsonCoefficient < -0.7">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a strong downhill (negative) linear relationship between the answers of the two selected questions.</p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient > -0.7 && vm.surveyStats[question.question_id].pearsonCoefficient < -0.3">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a moderate downhill (negative) relationship between the answers of the two selected questions.</p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >-0.3 && vm.surveyStats[question.question_id].pearsonCoefficient<0">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a weak downhill (negative) linear relationship between the answers of the two selected questions.</p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 0">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is no linear relationship between the answers of the two selected questions.</p>
@@ -50,8 +49,28 @@
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.3 && vm.surveyStats[question.question_id].pearsonCoefficient<0.7">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a moderate uphill (positive) linear relationship between the answers of the two selected questions.</p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.7 && vm.surveyStats[question.question_id].pearsonCoefficient<1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect downhill (negative) linear relationship between the answers of the two selected questions.</p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect uphill (positive) linear relationship between the answers of the two selected questions.</p>
+                            <div id="chartdiv{{question.question_id}}" style="height: 400px;width: 100%;"></div>
+
                         </div>
-                        <div id="chartdiv{{question.question_id}}" style="height: 400px;width: 100%;"></div>
+                    </div>
+                    <md-divider></md-divider>
+                    <div class="regressionDiv">
+                        <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
+                            <label>Calculate linear regression with question: </label>
+                            <md-select ng-change="vm.calculateRegression(question.question_id, question.regressionWith)" ng-model="question.regressionWith">
+                                <md-option ng-value="999"></md-option>
+                                <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                        <div class="correlationValue" ng-if="vm.surveyStats[question.question_id].regression && question.regressionWith != 999">
+                            <p>Computed linear regression equation: <strong>{{vm.regressionEqString}}</strong></p>
+                            <md-input-container>
+                                <label>Predict Y value when X =</label>
+                                <input ng-model="vm.surveyStats[question.question_id].regression.predictX" ng-blur="vm.calculateRegressionPrediction(question.question_id, vm.surveyStats[question.question_id].regression.predictX)">
+                            </md-input-container>
+                            <p ng-if="vm.surveyStats[question.question_id].regression.predictedY"><strong>Using the Least Squares Method, for an X ({{question.question_text}}) value of {{vm.surveyStats[question.question_id].regression.predictX}}
+                                , the predicted Y ({{vm.surveyStats[question.question_id].regression.regressionWithText}}) value is equal to: {{ vm.surveyStats[question.question_id].regression.predictedY }}</strong></p>
+                        </div>
                     </div>
                 </div>
             </md-card>

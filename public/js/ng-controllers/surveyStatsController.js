@@ -88,6 +88,13 @@
 
 
         vm.calculateCorrelation = function (questionId1, questionId2) {
+            if(questionId1 == 999 || questionId2 == 999) return;
+            var q1 = vm.survey.questions.filter(function(el){
+                return el.question_id === questionId1;
+            });
+            var q2 = vm.survey.questions.filter(function(el){
+                return el.question_id === questionId2;
+            });
             $http({
                 method: 'GET',
                 url: '/correlation/' + questionId1 + "/" + questionId2
@@ -98,20 +105,20 @@
                     "theme": "light",
                     "autoMarginOffset": 20,
                     "dataProvider": response.data.scatterPlotValues,
-                    "valueAxes": [{
+                        "valueAxes": [{
                         "position": "bottom",
                         "axisAlpha": 0,
                         "dashLength": 1,
-                        "title": "X Axis"
+                        "title": q2[0].question_text + " (x axis)"
                     }, {
                         "axisAlpha": 0,
                         "dashLength": 1,
                         "position": "left",
-                        "title": "Y Axis"
+                        "title": q1[0].question_text + " (y axis)"
                     }],
                     "startDuration": 1,
                     "graphs": [{
-                        "balloonText": "x:[[x]] y:[[y]]",
+                        "balloonText": "y:[[y]] x:[[x]]",
                         "bullet": "round",
                         "minBulletSize": 10,
                         "lineAlpha": 0,
@@ -127,10 +134,43 @@
                         "position": "bottom-right"
                     }
                 });
-                console.log("test");
             }, function errorCallback(response) {
                 console.log('Error: ' + response);
             });
+        };
+
+        vm.calculateRegression = function (questionId1, questionId2) {
+            if(questionId1 == 999 || questionId2 == 999) return;
+            $http({
+                method: 'GET',
+                url: '/regression/' + questionId1 + "/" + questionId2
+            }).then(function successCallback(response) {
+                vm.surveyStats[response.data.questionId].regression = {};
+                vm.regressionEqString = "Y = " + response.data.a.toFixed(4);
+                if(response.data.b.toFixed(4) > 0) {
+                    vm.regressionEqString += " + " + response.data.b.toFixed(4);
+                }
+                else {
+                    vm.regressionEqString += " - " + Math.abs(response.data.b.toFixed(4));
+
+                }
+                vm.regressionEqString += " * X";
+                vm.surveyStats[response.data.questionId].regression.a = response.data.a.toFixed(4);
+                vm.surveyStats[response.data.questionId].regression.b = response.data.b.toFixed(4);
+
+                var regressionWithQ = vm.survey.questions.filter(function(el){
+                    return el.question_id === questionId2;
+                });
+                vm.surveyStats[response.data.questionId].regression.regressionWithText = regressionWithQ[0].question_text;
+                console.log(vm.test);
+            }, function errorCallback(response) {
+                console.log('Error: ' + response);
+            });
+        };
+
+        vm.calculateRegressionPrediction = function (questionId, x) {
+            vm.surveyStats[questionId].regression.predictedY = (parseInt(vm.surveyStats[questionId].regression.a)
+                                                                    + vm.surveyStats[questionId].regression.b * x).toFixed(4);
         }
     }
 
