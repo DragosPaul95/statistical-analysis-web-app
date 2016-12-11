@@ -34,7 +34,7 @@
                     </table>
                     <div class="correlationDiv">
                         <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
-                            <label>Calculate Pearson correlation coefficient with:</label>
+                            <label>View correlation with question: </label>
                             <md-select ng-change="vm.calculateCorrelation(question.question_id, question.correlationWith)" ng-model="question.correlationWith">
                                 <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
                             </md-select>

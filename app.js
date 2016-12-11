@@ -2,11 +2,15 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mysql      = require('mysql');
 var crypto = require('crypto');
+var algebra = require('algebra.js');
 //var bcrypt = require('bcrypt');
 var sync = require('synchronize');
 var fiber = sync.fiber;
 var await = sync.await;
 var defer = sync.defer;
+var Fraction = algebra.Fraction;
+var Expression = algebra.Expression;
+var Equation = algebra.Equation;
 
 var app = express();
 app.use("/", express.static(__dirname + '/public'));
@@ -52,6 +56,57 @@ app.get('/getSurvey/:surveyID', function(req, res) {
     }
 
 });
+
+app.get('/regression/:qId1/:qId2', function(req, res) {
+    var survey = {};
+    try {
+        fiber(function() {
+            var x = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.qId1, defer()));
+            var y = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.qId2, defer()));
+            var sumX = 0;
+            var sumY = 0;
+            var sumXsq = 0;
+            var sumXY = 0;
+            for(var i=0;i<x.length;i++) {
+                sumX += parseInt(x[i].answer);
+                sumY += parseInt(y[i].answer);
+                sumXsq += Math.pow(parseInt(x[i].answer), 2);
+                sumXY += (parseInt(x[i].answer) * parseInt(y[i].answer));
+            }
+            var eq1_1String = "";
+            eq1_1String += x.length + " * a + " + sumX + " * b";
+            var eq1_2String = sumY.toString();
+            var eq1_1 = algebra.parse(eq1_1String);
+            var eq1_2 = algebra.parse(eq1_2String);
+            var eq1 = new Equation(eq1_1, eq1_2);
+            var bEqVal = eq1.solveFor("b");
+
+            var eq2_1String = "";
+            eq2_1String += sumX + " * a + " + sumXsq + " * (" + bEqVal.toString() + ")";
+            var eq2_2String = sumXY.toString();
+            var eq2_1 = algebra.parse(eq2_1String);
+            var eq2_2 = algebra.parse(eq2_2String);
+            var eq2 = new Equation(eq2_1, eq2_2);
+            var aVal = eq2.solveFor("a");
+
+            var eq3_1String = x.length + " * " + aVal.toString() + " + " + sumX + " * b";
+            var eq3_1 = algebra.parse(eq3_1String);
+            var eq3_2 = eq1_2;
+            var eq3 = new Equation(eq3_1, eq3_2);
+            var bVal = eq3.solveFor("b");
+
+            res.send({
+                "a": aVal.numer / aVal.denom,
+                "b": bVal.numer / bVal.denom
+            });
+
+        });
+    } catch (err) {
+        throw err;
+    }
+
+});
+
 
 app.get('/correlation/:questionId1/:questionId2', function (req,res) {
     try {
@@ -276,7 +331,7 @@ app.post('/login', function (req, res) {
     db.query("SELECT * FROM users WHERE user_email = ?", [req.body.username], function(err, result){
        if (!err) {
            if(result[0] && result[0].user_email == post.user_email) {
-               if(result[0].user_password_hash == post.user_password) {
+               if(result[0].user_password == post.user_password) {
                    // authenticated
                    var authObj = {
                        userId: result[0].user_id,
