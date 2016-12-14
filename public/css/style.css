@@ -85,3 +85,12 @@ body {
 md-input-container .md-errors-spacer {
     min-height: 0;
 }
+.invalidLoginDiv {
+    text-align: center;
+}
+.invalidLoginDiv h4 {
+    color: red;
+}
+#stdevVal {
+    margin-bottom: 10px;
+}

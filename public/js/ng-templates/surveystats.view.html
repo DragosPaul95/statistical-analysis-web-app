@@ -16,19 +16,7 @@
                     <am-chart id="chart{{question.question_id}}" options="vm.amChartOptions[question.question_id]"></am-chart>
                 </div>
                 <div class="questionStatsDiv">
-                    <table class="table table.bordered">
-                        <thead >
-                            <tr>
-                                <th>Standard Deviation</th>
-                                <th>Random stat #2</th>
-                                <th>Random stat #3</th>
-                                <th>Random stat #4</th>
-                            </tr>
-                        </thead>
-                        <tr>
-                            <td>{{vm.surveyStats[question.question_id].stdev}}</td>
-                        </tr>
-                    </table>
+                    <p id="stdevVal">Standard Deviation: <strong>{{vm.surveyStats[question.question_id].stdev}}</strong></p>
                     <md-divider></md-divider>
                     <div class="correlationDiv">
                         <md-input-container class="md-block fixSelectAlign" flex-gt-sm>

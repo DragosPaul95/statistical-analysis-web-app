@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var mysql      = require('mysql');
 var crypto = require('crypto');
 var algebra = require('algebra.js');
-//var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt-nodejs');
 var sync = require('synchronize');
 var fiber = sync.fiber;
 var await = sync.await;
@@ -353,11 +353,12 @@ app.post('/login', function (req, res) {
         user_email: req.body.username,
         user_password: req.body.password
     };
+
     var token = crypto.randomBytes(20).toString('hex');
     db.query("SELECT * FROM users WHERE user_email = ?", [req.body.username], function(err, result){
        if (!err) {
            if(result[0] && result[0].user_email == post.user_email) {
-               if(result[0].user_password == post.user_password) {
+               if(bcrypt.compareSync(post.user_password, result[0].user_password_hash))  {
                    // authenticated
                    var authObj = {
                        userId: result[0].user_id,
@@ -374,6 +375,9 @@ app.post('/login', function (req, res) {
                            );
                        }
                    });
+               }
+               else {
+                   res.sendStatus(403);
                }
            }
            else {

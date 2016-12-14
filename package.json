@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "algebra.js": "^0.2.5",
     "angular-cookies": "^1.2.13",
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
@@ -19,5 +20,6 @@
     "mysql": "^2.11.1",
     "sync": "^0.2.5",
     "synchronize": "^2.0.0"
-  }
+  },
+  "dependencies": {}
 }

@@ -5,10 +5,10 @@
         .module('app')
         .controller('loginController', loginController);
 
-    loginController.$inject = ['$state', '$cookies', '$scope', '$http'];
-    function loginController($state, $cookies, $scope, $http) {
+    loginController.$inject = ['$state', '$cookies', '$rootScope', '$location', '$http'];
+    function loginController($state, $cookies, $rootScope, $location, $http) {
         var vm = this;
-        vm.user = {};
+        if($rootScope.auth) $location.path('/results');
         vm.login = function (user) {
             $http.post('/login', user)
                 .success(function(data) {
@@ -19,6 +19,7 @@
                     $state.go('newSurvey');
                 })
                 .error(function(data) {
+                    vm.invalidAttempt = true;
                     console.log('Error: ' + data);
                 });
         };
