@@ -60,20 +60,87 @@ app.get('/getSurvey/:surveyID', function(req, res) {
 app.get('/multianalysis/:surveyID', function(req, res) {
    try {
        fiber(function() {
-           var queryAnswers = await(db.query('SELECT sq.question_id, qc.choice_label, a.answer FROM answers a ' +
-                                             'JOIN survey_questions sq ON a.answer_question_id = sq.question_id ' +
-                                             'JOIN questions_choices qc ON qc.question_id = sq.question_id ' +
-                                             'JOIN surveys s ON s.survey_id = sq.question_survey_id ' +
-                                             'WHERE s.survey_id = ? AND qc.choice_value = a.answer', req.params.surveyID, defer())
-                                   );
-           var choicesObj = {};
-           for(var i = 0; i<queryAnswers.length; i++) {
-               var queryChoices = await(db.query('SELECT choice_value, choice_label FROM questions_choices WHERE question_id = ?', xx, defer()));
-
+           var questions = [];
+           var queryQuestions = await(db.query('SELECT * FROM survey_questions WHERE question_survey_id = ?', req.params.surveyID, defer()));
+           for(var i = 0; i < queryQuestions.length; i++) {
+               var queryChoices = await(db.query('SELECT * FROM questions_choices WHERE question_id = ?', queryQuestions[i].question_id, defer()));
+               questions.push({
+                   question_id: queryQuestions[i].question_id,
+                   question_text: queryQuestions[i].question_text,
+                   question_type: queryQuestions[i].question_type,
+                   question_choices: queryChoices
+               });
            }
 
-       })
 
+           var questionsWithCount = [];
+           var maxAnswersArr = [];
+           for(var i=0;i<questions.length;i++) {
+               var question = questions[i];
+
+               var questionObj = {};
+               var maxCount = 0;
+               var labelMaxCountChoice;
+               for (var ii=0; ii<question.question_choices.length;ii++){
+                   var choice = question.question_choices[ii];
+
+                   var choiceAnswers = await(db.query('SELECT qc.choice_label, COUNT(a.answer) as choice_count FROM answers a ' +
+                       'JOIN survey_questions sq ON a.answer_question_id = sq.question_id ' +
+                       'JOIN questions_choices qc ON qc.question_id = sq.question_id ' +
+                       'WHERE sq.question_id = ? AND qc.choice_value = ? AND a.answer = ? GROUP BY qc.choice_label', [choice.question_id, choice.choice_value, choice.choice_value], defer())
+                   );
+                   questionObj[choiceAnswers[0].choice_label] = choiceAnswers[0].choice_count;
+                   if(choiceAnswers[0].choice_count > maxCount) {
+                       maxCount = choiceAnswers[0].choice_count;
+                       labelMaxCountChoice = choiceAnswers[0].choice_label;
+                   }
+               }
+               questionsWithCount.push(questionObj);
+               maxAnswersArr.push({
+                   "choice": labelMaxCountChoice,
+                   "value": maxCount
+               });
+           }
+
+           var geoMeanObj = {};
+           for(var i=0;i<questions.length;i++) {
+               var keys = Object.keys(questionsWithCount[i]);
+               for(var ii=0;ii<keys.length;ii++){
+                   var val = (questionsWithCount[i][keys[ii]] / maxAnswersArr[i].value);
+                   if(geoMeanObj[keys[ii]] === undefined) geoMeanObj[keys[ii]] = val + "##";
+                   else geoMeanObj[keys[ii]] += val + "##";
+               }
+           }
+
+           var geometricMeanFunc = function(x) {
+               var n = x.length;
+               var GM_log = 0.0;
+               for (var i = 0; i < n; ++i) {
+                   if (x[i] == 0) {
+                       return 0.0;
+                   }
+                   GM_log += Math.log(x[i]);
+               }
+               return Math.exp(GM_log / n);
+           };
+
+           var geoMeanArr = [];
+           for(var key in geoMeanObj) {
+               var splitVals = geoMeanObj[key].split("##");
+               for(var i = 0; i< splitVals.length; i++) {
+                   if(splitVals[i] !== "") splitVals[i] = parseFloat(splitVals[i]);
+                   else splitVals.splice(i, 1);
+               }
+               geoMeanArr.push({
+                   key: key,
+                   mean: geometricMeanFunc(splitVals)
+               })
+           }
+           geoMeanArr.sort(function(a,b) { return parseFloat(a.mean) - parseFloat(b.mean) } );
+
+
+           res.send(geoMeanArr);
+       })
    }  catch (err) {
        throw err;
    }
