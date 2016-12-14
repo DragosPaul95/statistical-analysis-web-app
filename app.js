@@ -57,6 +57,28 @@ app.get('/getSurvey/:surveyID', function(req, res) {
 
 });
 
+app.get('/multianalysis/:surveyID', function(req, res) {
+   try {
+       fiber(function() {
+           var queryAnswers = await(db.query('SELECT sq.question_id, qc.choice_label, a.answer FROM answers a ' +
+                                             'JOIN survey_questions sq ON a.answer_question_id = sq.question_id ' +
+                                             'JOIN questions_choices qc ON qc.question_id = sq.question_id ' +
+                                             'JOIN surveys s ON s.survey_id = sq.question_survey_id ' +
+                                             'WHERE s.survey_id = ? AND qc.choice_value = a.answer', req.params.surveyID, defer())
+                                   );
+           var choicesObj = {};
+           for(var i = 0; i<queryAnswers.length; i++) {
+               var queryChoices = await(db.query('SELECT choice_value, choice_label FROM questions_choices WHERE question_id = ?', xx, defer()));
+
+           }
+
+       })
+
+   }  catch (err) {
+       throw err;
+   }
+});
+
 app.get('/regression/:qId1/:qId2', function(req, res) {
     var survey = {};
     try {

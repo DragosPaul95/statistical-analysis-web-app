@@ -27,7 +27,7 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
                     templateUrl: 'js/ng-templates/login.view.html'
                 },
                 'header':{
-                    templateUrl:'js/ng-templates/navbar.view.html',
+                    templateUrl:'js/ng-templates/navbar.view.html'
                 }
             }
         })
@@ -35,10 +35,10 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
             url: '/results',
             views:{
                 'content':{
-                    templateUrl: 'js/ng-templates/questresults.view.html',
+                    templateUrl: 'js/ng-templates/questresults.view.html'
                 },
                 'header':{
-                    templateUrl:'js/ng-templates/navbar.view.html',
+                    templateUrl:'js/ng-templates/navbar.view.html'
                 }
             }
         })
@@ -46,10 +46,10 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
             url: '/stats/:surveyID',
             views:{
                 'content':{
-                    templateUrl: 'js/ng-templates/surveystats.view.html',
+                    templateUrl: 'js/ng-templates/surveystats.view.html'
                 },
                 'header':{
-                    templateUrl:'js/ng-templates/navbar.view.html',
+                    templateUrl:'js/ng-templates/navbar.view.html'
                 }
             }
         })
@@ -57,7 +57,7 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
             url: '/survey/:surveyID',
             views:{
                 'content':{
-                    templateUrl: 'js/ng-templates/takequest.view.html',
+                    templateUrl: 'js/ng-templates/takequest.view.html'
                 }
             }
         })
