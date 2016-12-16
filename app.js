@@ -136,7 +136,7 @@ app.get('/multianalysis/:surveyID', function(req, res) {
                    mean: geometricMeanFunc(splitVals)
                })
            }
-           geoMeanArr.sort(function(a,b) { return parseFloat(a.mean) - parseFloat(b.mean) } );
+           geoMeanArr.sort(function(a,b) { return parseFloat(b.mean) - parseFloat(a.mean) } );
 
 
            res.send(geoMeanArr);

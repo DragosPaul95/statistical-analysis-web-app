@@ -53,6 +53,17 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
                 }
             }
         })
+        .state('mcanalysis', {
+            url: '/multicriterial/:surveyID',
+            views:{
+                'content':{
+                    templateUrl: 'js/ng-templates/multicriterialanalysis.view.html'
+                },
+                'header':{
+                    templateUrl:'js/ng-templates/navbar.view.html'
+                }
+            }
+        })
         .state('takeQuest', {
             url: '/survey/:surveyID',
             views:{

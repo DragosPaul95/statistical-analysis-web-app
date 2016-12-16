@@ -5,8 +5,8 @@
         .module('app')
         .controller('resultsController', resultsController);
 
-    resultsController.$inject = ['$rootScope', '$scope', '$http'];
-    function resultsController($rootScope, $scope, $http) {
+    resultsController.$inject = ['$rootScope', '$scope', '$http', "$location"];
+    function resultsController($rootScope, $scope, $http, $location) {
         var vm = this;
 
         var data = {
@@ -15,11 +15,11 @@
         $http.post('/surveysByUser', data)
             .success(function(data) {
                 vm.surveys = data;
-
             })
             .error(function(data) {
                 console.log('Error: ' + data);
             });
+
     }
 
 })();

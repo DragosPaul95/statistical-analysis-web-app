@@ -5,8 +5,8 @@
         .module('app')
         .controller('addQuestController', addQuestController);
 
-    addQuestController.$inject = ['$rootScope', '$scope', '$http', 'Flash'];
-    function addQuestController($rootScope, $scope, $http, Flash) {
+    addQuestController.$inject = ['$rootScope', '$scope', '$http'];
+    function addQuestController($rootScope, $scope, $http) {
         var vm = this;
         vm.survey = {};
         vm.survey.questions = [];

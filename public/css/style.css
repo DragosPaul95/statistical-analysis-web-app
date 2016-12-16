@@ -94,3 +94,7 @@ body {
 #stdevVal {
     margin-bottom: 10px;
 }
+.table {
+    width: 50%;
+    margin: 0px auto;
+}
