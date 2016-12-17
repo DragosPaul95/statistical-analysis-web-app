@@ -87,6 +87,20 @@
         });
 
 
+        vm.calculateNpCorrelation = function (questionId1, questionId2) {
+            $http({
+                method: 'GET',
+                url: '/npcorrelation/' + questionId1 + "/" + questionId2
+            }).then(function successCallback(response) {
+                vm.surveyStats[questionId1].npdata = response.data;
+                if(vm.surveyStats[questionId1].npdata.choices2.length >
+                    vm.surveyStats[questionId1].npdata.choices1.length) vm.surveyStats[questionId1].npdata.order = 1;
+                else vm.surveyStats[questionId1].npdata.order = 2;
+            }, function errorCallback(response) {
+                console.log('Error: ' + response);
+            });
+        };
+
         vm.calculateCorrelation = function (questionId1, questionId2) {
             if(questionId1 == 999 || questionId2 == 999) return;
             var q1 = vm.survey.questions.filter(function(el){
@@ -97,7 +111,7 @@
             });
             $http({
                 method: 'GET',
-                url: '/correlation/' + questionId1 + "/" + questionId2
+                url: '/pcorrelation/' + questionId1 + "/" + questionId2
             }).then(function successCallback(response) {
                 vm.surveyStats[response.data.questionId].pearsonCoefficient = response.data.pearsonCoefficient;
                 var chart = AmCharts.makeChart("chartdiv" + questionId1, {

@@ -12,6 +12,7 @@
     "algebra.js": "^0.2.5",
     "angular-cookies": "^1.2.13",
     "bcrypt": "^0.8.7",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",
     "chart.js": "^2.4.0",
     "cookie-parser": "^1.4.3",

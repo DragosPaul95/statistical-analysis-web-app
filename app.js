@@ -197,8 +197,97 @@ app.get('/regression/:qId1/:qId2', function(req, res) {
 
 });
 
+app.get('/npcorrelation/:questionId1/:questionId2', function (req,res) {
+    try {
+        fiber(function() {
+            var queryAnswers1 = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.questionId1, defer()));
+            var queryChoicesQuestion1 = await(db.query('SELECT * FROM questions_choices WHERE question_id = ?', req.params.questionId1, defer()));
+            var queryAnswers2 = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.questionId2, defer()));
+            var queryChoicesQuestion2 = await(db.query('SELECT * FROM questions_choices WHERE question_id = ?', req.params.questionId2, defer()));
 
-app.get('/correlation/:questionId1/:questionId2', function (req,res) {
+            var resultMatrix = [];
+            var choice1, choice2;
+            var lineMatrix = [];
+            if(queryChoicesQuestion2.length > queryChoicesQuestion1.length) {
+                for(var ii=0;ii<queryChoicesQuestion2.length;ii++){
+                    choice2 = queryChoicesQuestion2[ii];
+                    lineMatrix = [];
+
+                    for(var i=0;i<queryChoicesQuestion1.length;i++) {
+                        choice1 = queryChoicesQuestion1[i];
+                        var choice1count = 0;
+                        for(var iii=0;iii<queryAnswers1.length;iii++) {
+                            if(queryAnswers1[iii].answer == choice1.choice_value && queryAnswers2[iii].answer == choice2.choice_value) choice1count++;
+                        }
+                        lineMatrix.push(choice1count);
+                    }
+                    resultMatrix.push(lineMatrix);
+                }
+            }
+            else {
+                for(var ii=0;ii<queryChoicesQuestion1.length;ii++){
+                    choice1 = queryChoicesQuestion1[ii];
+                    lineMatrix = [];
+
+                    for(var i=0;i<queryChoicesQuestion2.length;i++) {
+                        choice2 = queryChoicesQuestion2[i];
+                        var choice2count = 0;
+                        for(var iii=0;iii<queryAnswers1.length;iii++) {
+                            if(queryAnswers1[iii].answer == choice1.choice_value && queryAnswers2[iii].answer == choice2.choice_value) choice2count++;
+                        }
+                        lineMatrix.push(choice2count);
+                    }
+                    resultMatrix.push(lineMatrix);
+                }
+            }
+
+            var sum = function(arr) {
+                return arr.reduce(function(a, b){ return a + b; }, 0);
+            };
+
+            var lineTotals = resultMatrix.map(sum);
+            var columnTotals = resultMatrix.map(function(row, i) {
+                                return sum(resultMatrix.map(function(row) { return row[i]; }));
+            });
+            columnTotals.pop();
+
+            var theoreticalResultsMatrix = [];
+            for(var i=0;i<lineTotals.length;i++) {
+                var line = [];
+                for(var ii=0;ii<columnTotals.length;ii++) {
+                    line.push(Math.round((lineTotals[i]*columnTotals[ii]) / queryAnswers1.length));
+                }
+                theoreticalResultsMatrix.push(line);
+            }
+
+            var chiSq = 0;
+            for(var i=0;i<resultMatrix.length;i++) {
+                var line1 = resultMatrix[i];
+                for(var ii=0;ii<line1.length;ii++) {
+                    chiSq += (Math.pow(resultMatrix[i][ii]-theoreticalResultsMatrix[i][ii], 2)/theoreticalResultsMatrix[i][ii])
+                }
+            }
+
+            var cramerCoeff = Math.sqrt(chiSq/(queryAnswers1.length+chiSq));
+
+            res.send({
+                choices1: queryChoicesQuestion1,
+                choices2: queryChoicesQuestion2,
+                cramerCoeff: cramerCoeff,
+                resultMatrix: resultMatrix,
+                theoreticalMatrix: theoreticalResultsMatrix,
+                lineTotal: lineTotals,
+                columnTotal: columnTotals,
+                totalVal: queryAnswers1.length
+            });
+
+        });
+    } catch (err) {
+        throw err;
+    }
+});
+
+app.get('/pcorrelation/:questionId1/:questionId2', function (req,res) {
     try {
         fiber(function() {
             var queryAnswers1 = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.questionId1, defer()));
