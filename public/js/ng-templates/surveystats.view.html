@@ -38,7 +38,6 @@
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.7 && vm.surveyStats[question.question_id].pearsonCoefficient<1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect downhill (negative) linear relationship between the answers of the two selected questions.</p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect uphill (positive) linear relationship between the answers of the two selected questions.</p>
                             <div id="chartdiv{{question.question_id}}" style="height: 400px;width: 100%;"></div>
-
                         </div>
                     </div>
                     <div class="correlationDiv">
@@ -111,5 +110,5 @@
             </md-card>
         </div>
     </md-content>
-
+    <div id="chartdiv" style="height: 400px;width: 100%;"></div>
 </div>

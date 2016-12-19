@@ -125,6 +125,10 @@ app.get('/ttest/:questionId1/:questionId2', function(req, res) {
                 );
                 data.dof = Math.round(dof_denom/dof_numer);
                 data.t_table = t_table.t95[data.dof];
+                data.lowerTinterval = data.sample1.mean - data.sample2.mean - ( data.t_table * Math.sqrt(Math.pow(data.sample1.variance,2)/data.sample1.n +
+                        Math.pow(data.sample2.variance,2)/data.sample2.n) );
+                data.upperTinterval = data.sample1.mean - data.sample2.mean + ( data.t_table * Math.sqrt(Math.pow(data.sample1.variance,2)/data.sample1.n +
+                        Math.pow(data.sample2.variance,2)/data.sample2.n) );
                 return data;
 
             };
