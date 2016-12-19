@@ -57,6 +57,92 @@ app.get('/getSurvey/:surveyID', function(req, res) {
 
 });
 
+app.get('/ttest/:questionId1/:questionId2', function(req, res) {
+    try {
+        fiber(function() {
+            var t_table = {
+              t95: {
+                  "1": 6.314,
+                  "2" : 2.920,
+                  "3" : 2.353,
+                  "4" : 2.132,
+                  "5" : 2.015,
+                  "6" : 1.943,
+                  "7" : 1.895,
+                  "8" : 1.860,
+                  "9" : 1.833,
+                  "10": 1.812,
+                  "11": 1.796,
+                  "12": 1.782,
+                  "13": 1.771,
+                  "14": 1.761,
+                  "15": 1.753,
+                  "16": 1.746,
+                  "17": 1.740,
+                  "18": 1.734,
+                  "19": 1.729,
+                  "20": 1.725,
+                  "21": 1.721,
+                  "22": 1.717,
+                  "23": 1.714,
+                  "24": 1.711,
+                  "25": 1.708,
+                  "26": 1.706,
+                  "27": 1.703,
+                  "28": 1.701,
+                  "29": 1.699,
+                  "30": 1.697
+              }
+            };
+            var getstats = function (questionId) {
+                var queryAnswers = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', questionId, defer()));
+                var sum = queryAnswers.reduce(function(a, b) {
+                    return {answer: parseInt(a.answer) + parseInt(b.answer)};
+                });
+                var avg = sum.answer / queryAnswers.length;
+                var sumOfSquares = 0 ;
+                for(var i = 0, len=queryAnswers.length; i<len; i++) {
+                    sumOfSquares += Math.pow((queryAnswers[i].answer-avg), 2);
+                }
+                //bessel correction(n-1) when using sample mean
+                var variance = sumOfSquares/(queryAnswers.length-1);
+
+                return {
+                    variance: variance,
+                    mean: avg,
+                    n: queryAnswers.length
+                }
+            };
+
+            var computeT = function (data) {
+                data.t_val = (data.sample1.mean - data.sample2.mean) /
+                    Math.sqrt(data.sample1.variance/data.sample1.n + data.sample2.variance/data.sample2.n);
+
+                var dof_denom = Math.pow(data.sample1.variance/data.sample1.n + data.sample2.variance/data.sample2.n, 2);
+                var dof_numer = (
+                    Math.pow(data.sample1.variance, 2)/(Math.pow(data.sample1.n, 2)*(data.sample1.n-1) ) +
+                    Math.pow(data.sample2.variance, 2)/(Math.pow(data.sample2.n, 2)*(data.sample2.n-1) )
+                );
+                data.dof = Math.round(dof_denom/dof_numer);
+                data.t_table = t_table.t95[data.dof];
+                return data;
+
+            };
+
+            var data = {
+                sample1: getstats(req.params.questionId1),
+                sample2: getstats(req.params.questionId2)
+            };
+            data = computeT(data);
+
+            res.send(data);
+        });
+
+    } catch (err) {
+        throw err;
+    }
+});
+
 app.get('/multianalysis/:surveyID', function(req, res) {
    try {
        fiber(function() {
@@ -327,30 +413,26 @@ app.get('/pcorrelation/:questionId1/:questionId2', function (req,res) {
     }
 });
 
-app.get('/getstats/:questionId', function (req,res) {
+app.get('/getstdev/:questionId', function (req,res) {
     try {
         fiber(function() {
-            var questionStatistics = {};
-            var getStandardDeviation = function () {
-                var queryAnswers = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.questionId, defer()));
-                var sum = queryAnswers.reduce(function(a, b) {
-                    return {answer: parseInt(a.answer) + parseInt(b.answer)};
-                });
-                var avg = sum.answer / queryAnswers.length;
-                var sumOfSquares = 0 ;
-                for(var i = 0, len=queryAnswers.length; i<len; i++) {
-                    sumOfSquares += Math.pow((queryAnswers[i].answer-avg), 2);
-                }
-                //bessel correction(n-1) when using sample mean
-                var variance = sumOfSquares/(queryAnswers.length-1);
-                questionStatistics.stdev = (Math.sqrt(variance)).toFixed(6);
-            };
+            var queryAnswers = await(db.query('SELECT answer FROM `answers` WHERE answer_question_id = ?', req.params.questionId, defer()));
+            var sum = queryAnswers.reduce(function(a, b) {
+                return {answer: parseInt(a.answer) + parseInt(b.answer)};
+            });
+            var avg = sum.answer / queryAnswers.length;
+            var sumOfSquares = 0 ;
+            for(var i = 0, len=queryAnswers.length; i<len; i++) {
+                sumOfSquares += Math.pow((queryAnswers[i].answer-avg), 2);
+            }
+            //bessel correction(n-1) when using sample mean
+            var variance = sumOfSquares/(queryAnswers.length-1);
+            var stdev = (Math.sqrt(variance)).toFixed(6);
 
-            getStandardDeviation();
 
             res.send({
                 questionId: req.params.questionId,
-                stats: questionStatistics
+                stdev: stdev
             });
         });
     } catch (err) {
@@ -366,6 +448,10 @@ app.get('/questionstats/:questionId', function(req, res) {
             var labelsObj = {};
             var queryQuestion = await(db.query('SELECT * FROM survey_questions WHERE question_id = ?', req.params.questionId, defer()))[0];
             var queryQuestionLabels = await(db.query('SELECT choice_value, choice_label FROM `questions_choices` WHERE question_id = ?', req.params.questionId, defer()));
+            if(queryQuestionLabels.length == 0) {
+                queryQuestion.showPercentages = true;
+                queryQuestionLabels = await(db.query('SELECT answer as choice_value, answer as choice_label FROM answers WHERE answer_question_id = ?', req.params.questionId, defer()));
+            }
             for(iterator = 0; iterator<queryQuestionLabels.length; iterator++) {
                 labelsObj[queryQuestionLabels[iterator].choice_value] = queryQuestionLabels[iterator].choice_label;
             }
@@ -376,7 +462,7 @@ app.get('/questionstats/:questionId', function(req, res) {
             }
             for(iterator = 0; iterator<queryAnswers.length; iterator++) {
                 answersObj.push({
-                   "option":  labelsObj[queryAnswers[iterator].answer],
+                    "option":  labelsObj[queryAnswers[iterator].answer],
                     "valuePercentage": ( (queryAnswers[iterator].count/totalAnswers)*100).toFixed(2),
                     "valueRaw": queryAnswers[iterator].count
                 });

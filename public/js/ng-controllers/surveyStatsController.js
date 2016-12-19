@@ -11,6 +11,13 @@
         vm.surveyID = $stateParams.surveyID;
 
         vm.makeChart = function (response) {
+            var valueField;
+            var valueText = "";
+            if(response.data.showPercentages) {
+                valueField = "valuePercentage";
+                valueText = "%";
+            }
+            else valueField = "valueRaw";
             vm.amChartOptions[response.data.question_id] = {
                 "type": "pie",
                 "startDuration": 0,
@@ -20,7 +27,7 @@
                     "position":"right",
                     "marginRight":100,
                     "autoMargins":false,
-                    "valueText": "[[value]][[test]]"
+                    "valueText": "[[value]]" + valueText
                 },
                 "innerRadius": "30%",
                 "defs": {
@@ -47,9 +54,8 @@
                     }]
                 },
                 "data": vm.questionsStats.answers,
-                "valueField": "valueRaw",
+                "valueField": valueField,
                 "titleField": "option",
-                "testField": "valuePercentage",
                 "export": {
                     "enabled": true
                 }
@@ -71,9 +77,10 @@
                     vm.makeChart(response);
                     $http({
                         method: 'GET',
-                        url: '/getstats/' + response.data.question_id
+                        url: '/getstdev/' + response.data.question_id
                     }).then(function successCallback(response) {
-                        vm.surveyStats[response.data.questionId] = response.data.stats;
+                        vm.surveyStats[response.data.questionId] = {};
+                        vm.surveyStats[response.data.questionId].stdev = response.data.stdev;
                     }, function errorCallback(response) {
                         console.log('Error: ' + response);
                     });
