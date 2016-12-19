@@ -106,9 +106,21 @@
                                 , the predicted Y ({{vm.surveyStats[question.question_id].regression.regressionWithText}}) value is equal to: {{ vm.surveyStats[question.question_id].regression.predictedY }}</strong></p>
                         </div>
                     </div>
+                    <div class="ttestDiv">
+                        <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
+                            <label>Compute T Test with question: </label>
+                            <md-select ng-change="vm.compute_ttest(question.question_id, question.ttestWith)" ng-model="question.ttestWith">
+                                <md-option ng-value="999"></md-option>
+                                <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                        <div class="correlationValue" ng-if="vm.surveyStats[question.question_id].ttestData && question.regressionWith != 999">
+                            <div id="bellcurve{{question.question_id}}" style="height: 400px;width: 100%;"></div>
+                        </div>
+
+                    </div>
                 </div>
             </md-card>
         </div>
     </md-content>
-    <div id="chartdiv" style="height: 400px;width: 100%;"></div>
 </div>

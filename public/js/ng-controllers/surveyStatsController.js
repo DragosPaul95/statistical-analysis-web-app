@@ -194,7 +194,7 @@
                                                                     + vm.surveyStats[questionId].regression.b * x).toFixed(4);
         };
 
-        vm.makeBellCurveChart = function () {
+        vm.makeBellCurveChart = function (questionId, verticals) {
             // Calculates a point Z(x), the Probability Density Function, on any normal curve.
 // This is the height of the point ON the normal curve.
 // For values on the Standard Normal Curve, call with Mean = 0, StdDev = 1.
@@ -237,12 +237,6 @@
             }
             //----------------------------------------------------------------------------------------------
 
-            /**
-             * Define values where to put vertical lines at
-             */
-            var verticals = [
-                -2, 0.1, 2
-            ];
 
             /**
              * Calculate data
@@ -262,7 +256,7 @@
             /**
              * Create a chart
              */
-            var chart = AmCharts.makeChart( "chartdiv", {
+            var chart = AmCharts.makeChart( "bellcurve" + questionId, {
                 "type": "serial",
                 "theme": "light",
                 "dataProvider": chartData,
@@ -305,7 +299,20 @@
 
             } );
         };
-        vm.makeBellCurveChart();
+
+        vm.compute_ttest = function (questionId1, questionId2) {
+            $http({
+                method: 'GET',
+                url: '/ttest/' + questionId1 + "/" + questionId2
+            }).then(function successCallback(response) {
+                vm.surveyStats[questionId1].ttestData = response.data;
+                var linesArr = [
+                    parseFloat(response.data.lowerTinterval).toFixed(1)/1, (parseFloat(response.data.t_val)).toFixed(1)/1, (parseFloat(response.data.upperTinterval)).toFixed(1)/1];
+                vm.makeBellCurveChart(questionId1, linesArr);
+            }, function errorCallback(response) {
+                console.log('Error: ' + response);
+            });
+        }
     }
 
 })();

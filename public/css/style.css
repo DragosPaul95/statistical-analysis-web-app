@@ -85,7 +85,7 @@ body {
     margin-top: 10px;
     text-align: center;
 }
-.correlationDiv, .regressionDiv {
+.correlationDiv, .regressionDiv, .ttestDiv {
     margin-bottom: 30px;
     margin-top: 30px;
     border: 1px solid #ccc;
