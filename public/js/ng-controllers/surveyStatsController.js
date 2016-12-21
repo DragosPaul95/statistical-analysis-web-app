@@ -242,12 +242,16 @@
              * Calculate data
              */
             var chartData = [];
+            var colorCount = 0;
             for ( var i = -5; i < 5.1; i += 0.1 ) {
                 var dp = {
                     category: i,
                     value: NormalDensityZx( i, 0, 1 )
                 };
                 if ( verticals.indexOf( Math.round( i * 10 ) / 10 ) !== -1 ) {
+                    if(colorCount == 0 || colorCount == 2) dp.color = "#000000";
+                    else dp.color = "#e5f442";
+                    colorCount++;
                     dp.vertical = dp.value;
                 }
                 chartData.push( dp );
@@ -275,7 +279,8 @@
                     "fillAlphas": 1,
                     "type": "column",
                     "valueField": "vertical",
-                    "fixedColumnWidth": 2,
+                    "colorField": "color",
+                    "fixedColumnWidth": 4,
                     "labelText": "[[category]]",
                     "labelOffset": 20,
                     "labelFunction": function(label, item) {

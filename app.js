@@ -117,6 +117,7 @@ app.get('/ttest/:questionId1/:questionId2', function(req, res) {
             var computeT = function (data) {
                 data.t_val = (data.sample1.mean - data.sample2.mean) /
                     Math.sqrt(data.sample1.variance/data.sample1.n + data.sample2.variance/data.sample2.n);
+                data.t_valAbs = Math.abs(data.t_val);
 
                 var dof_denom = Math.pow(data.sample1.variance/data.sample1.n + data.sample2.variance/data.sample2.n, 2);
                 var dof_numer = (
@@ -125,10 +126,12 @@ app.get('/ttest/:questionId1/:questionId2', function(req, res) {
                 );
                 data.dof = Math.round(dof_denom/dof_numer);
                 data.t_table = t_table.t95[data.dof];
-                data.lowerTinterval = data.sample1.mean - data.sample2.mean - ( data.t_table * Math.sqrt(Math.pow(data.sample1.variance,2)/data.sample1.n +
+                /*data.lowerTinterval = data.sample1.mean - data.sample2.mean - ( data.t_table * Math.sqrt(Math.pow(data.sample1.variance,2)/data.sample1.n +
                         Math.pow(data.sample2.variance,2)/data.sample2.n) );
                 data.upperTinterval = data.sample1.mean - data.sample2.mean + ( data.t_table * Math.sqrt(Math.pow(data.sample1.variance,2)/data.sample1.n +
-                        Math.pow(data.sample2.variance,2)/data.sample2.n) );
+                        Math.pow(data.sample2.variance,2)/data.sample2.n) );*/
+                data.upperTinterval = Math.abs(data.t_table);
+                data.lowerTinterval = -Math.abs(data.t_table);
                 return data;
 
             };
@@ -557,10 +560,10 @@ app.post('/savesurvey', function (req, res) {
         fiber(function() {
             //check token
             var unauthorized = false;
-            var queryUser = await(db.query('SELECT user_token FROM users WHERE user_id = ?', userAuth.userId, defer()));
+            /*var queryUser = await(db.query('SELECT user_token FROM users WHERE user_id = ?', userAuth.userId, defer()));
             if(queryUser[0].user_token != userAuth.token) {
                 unauthorized = true;
-            }
+            }*/
             if(!unauthorized) {
                 var query = await(db.query('INSERT INTO surveys SET ?', surveyData, defer()));
                 for(var i = 0; i < survey.questions.length; i++) {

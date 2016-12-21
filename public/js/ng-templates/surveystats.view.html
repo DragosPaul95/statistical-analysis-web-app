@@ -35,7 +35,7 @@
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 0">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is no linear relationship between the answers of the two selected questions.</p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0 && vm.surveyStats[question.question_id].pearsonCoefficient< 0.3">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a weak uphill (positive) linear relationship between the answers of the two selected questions.</p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.3 && vm.surveyStats[question.question_id].pearsonCoefficient<0.7">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a moderate uphill (positive) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.7 && vm.surveyStats[question.question_id].pearsonCoefficient<1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect downhill (negative) linear relationship between the answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.7 && vm.surveyStats[question.question_id].pearsonCoefficient<1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect downhill (positive) linear relationship between the answers of the two selected questions.</p>
                             <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect uphill (positive) linear relationship between the answers of the two selected questions.</p>
                             <div id="chartdiv{{question.question_id}}" style="height: 400px;width: 100%;"></div>
                         </div>
@@ -115,7 +115,19 @@
                             </md-select>
                         </md-input-container>
                         <div class="correlationValue" ng-if="vm.surveyStats[question.question_id].ttestData && question.regressionWith != 999">
-                            <div id="bellcurve{{question.question_id}}" style="height: 400px;width: 100%;"></div>
+                            <p>The computed T value is = {{vm.surveyStats[question.question_id].ttestData.t_val}}.</p>
+                            <p>According to the T sig/probability table with df = <strong>{{vm.surveyStats[question.question_id].ttestData.dof}}</strong>,
+                                the absolute value of the computed T must be <strong>at least {{vm.surveyStats[question.question_id].ttestData.t_table}}</strong> in order to reach
+                                a significance level p < .05</p>
+                            <p ng-if="vm.surveyStats[question.question_id].ttestData.t_valAbs>vm.surveyStats[question.question_id].ttestData.t_table">
+                                Computed absolute value of T = {{vm.surveyStats[question.question_id].ttestData.t_valAbs}} > Table T = {{vm.surveyStats[question.question_id].ttestData.t_table}}
+                                which means that this difference <strong>is</strong> statistically significant.
+                            </p>
+                            <p ng-if="vm.surveyStats[question.question_id].ttestData.t_valAbs<vm.surveyStats[question.question_id].ttestData.t_table">
+                                Computed absolute value of T = {{vm.surveyStats[question.question_id].ttestData.t_valAbs}} < Table T = {{vm.surveyStats[question.question_id].ttestData.t_table}}
+                                which means that this difference <strong>is NOT</strong> statistically significant.
+                            </p>
+                            <div id="bellcurve{{question.question_id}}" style="height: 600px;width: 100%;"></div>
                         </div>
 
                     </div>
