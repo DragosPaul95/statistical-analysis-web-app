@@ -1,5 +1,5 @@
 // app.js
-var app = angular.module('app', ['ui.router', 'ngCookies', 'ngFlash', 'ngMaterial', 'amChartsDirective'])
+var app = angular.module('app', ['ui.router', 'ngCookies', 'ngFlash', 'ngMaterial', 'amChartsDirective', 'ngMessages'])
     .config(config)
     .run(run);
 

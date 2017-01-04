@@ -9,11 +9,12 @@
         <md-subheader class="md-primary">{{vm.survey.description}}</md-subheader>
         <md-divider></md-divider>
 
+    <form novalidate name="surveyForm" class="surveyForm">
         <div class="question" ng-repeat="question in vm.survey.questions track by $index">
             <h4>{{question.question_text}}</h4>
             <div class="questionChoices" ng-if="question.question_type == 'singlechoice'">
                 <md-radio-group ng-model="vm.surveyAnswers[question.question_id]">
-                    <md-radio-button class="md-primary" value="{{choice.choice_value}}" ng-repeat="choice in question.question_choices">{{choice.choice_label}}</md-radio-button>
+                    <md-radio-button class="md-primary" ng-required="!vm.surveyAnswers[question.question_id]" value="{{choice.choice_value}}" ng-repeat="choice in question.question_choices">{{choice.choice_label}}</md-radio-button>
                 </md-radio-group>
             </div>
             <div class="questionChoices" ng-if="question.question_type == 'multiplechoice'">
@@ -26,12 +27,23 @@
             <div class="questionChoices" ng-if="question.question_type == 'text'">
                 <md-input-container>
                     <label>{{question.question_text}}</label>
-                    <input ng-model="vm.surveyAnswers[question.question_id]">
+                    <input name="test" ng-model="vm.surveyAnswers[question.question_id]" required minlength="1">
+                    <div ng-messages="surveyForm.test.$error" ng-show="surveyForm.test.$dirty">
+                        <div ng-message="required">This is required!</div>
+                    </div>
                 </md-input-container>
             </div>
             <md-divider></md-divider>
         </div>
         <md-button class="md-raised md-primary" ng-click="vm.saveAnswers(vm.surveyAnswers)">Save</md-button>
+    </form>
+
+    <div class="saveOk" ng-if="vm.saveOk !== undefined && vm.saveOk == true">
+        <p>Answers saved successfully!</p>
+    </div>
+    <div class="saveNOk" ng-if="vm.saveOk !== undefined && vm.saveOk == false">
+        <p>Please answer every question</p>
+    </div>
 
 </div>
 </md-content>

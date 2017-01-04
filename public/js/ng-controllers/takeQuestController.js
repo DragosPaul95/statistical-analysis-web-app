@@ -27,14 +27,30 @@
                 vm.surveyAnswers[qid] += "," + value;
             }
         };
+
         vm.saveAnswers = function (answers){
-            $http.post('/answer/' + vm.surveyID,answers)
-                .success(function(data) {
-                    console.log(data);
-                })
-                .error(function(data) {
-                    console.log('Error: ' + data);
-                });
+            if(Object.keys(answers).length && Object.keys(answers).length == vm.survey.questions.length) {
+                var answerVals = Object.values(answers);
+                for(var i = 0; i < answerVals.length; i++) {
+                    if(answerVals[i] === undefined) {
+                        vm.saveOk = false;
+                        return;
+                    }
+                }
+                $http.post('/answer/' + vm.surveyID,answers)
+                    .success(function(data) {
+                        console.log(data);
+                        vm.saveOk = true;
+                    })
+                    .error(function(data) {
+                        vm.saveOk = false;
+                        console.log('Error: ' + data);
+                    });
+            }
+            else {
+                vm.saveOk = false;
+            }
+
         }
     }
 
