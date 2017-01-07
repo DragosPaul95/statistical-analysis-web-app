@@ -635,8 +635,25 @@ app.post('/login', function (req, res) {
        }
         else res.sendStatus(500);
     });
-
 });
+
+app.delete('/delete', function (req, res) {
+    db.query("DELETE FROM surveys WHERE survey_id = ?", [req.body.surveyId], function(err, result){
+        if(err) { throw err; }
+        else {
+            var responseString;
+            if(result.affectedRows > 0) {
+                responseString = "Survey " + req.body.surveyId + " deleted";
+            }
+            else {
+                responseString = "No survey with id " + req.body.surveyId;
+            }
+            res.send(responseString);
+        }
+
+    });
+});
+
 
 
 var server = app.listen(3000, function () {
