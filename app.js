@@ -141,8 +141,13 @@ app.get('/ttest/:questionId1/:questionId2', function(req, res) {
                 sample2: getstats(req.params.questionId2)
             };
             data = computeT(data);
+            if(data.upperTinterval && data.lowerTinterval) {
+                res.send(data);
+            }
+            else {
+                res.sendStatus(400);
+            }
 
-            res.send(data);
         });
 
     } catch (err) {
@@ -362,17 +367,22 @@ app.get('/npcorrelation/:questionId1/:questionId2', function (req,res) {
             }
 
             var cramerCoeff = Math.sqrt(chiSq/(queryAnswers1.length+chiSq));
+            if(cramerCoeff) {
+                res.send({
+                    choices1: queryChoicesQuestion1,
+                    choices2: queryChoicesQuestion2,
+                    cramerCoeff: cramerCoeff,
+                    resultMatrix: resultMatrix,
+                    theoreticalMatrix: theoreticalResultsMatrix,
+                    lineTotal: lineTotals,
+                    columnTotal: columnTotals,
+                    totalVal: queryAnswers1.length
+                });
+            }
+            else {
+                res.sendStatus(400);
+            }
 
-            res.send({
-                choices1: queryChoicesQuestion1,
-                choices2: queryChoicesQuestion2,
-                cramerCoeff: cramerCoeff,
-                resultMatrix: resultMatrix,
-                theoreticalMatrix: theoreticalResultsMatrix,
-                lineTotal: lineTotals,
-                columnTotal: columnTotals,
-                totalVal: queryAnswers1.length
-            });
 
         });
     } catch (err) {
@@ -409,11 +419,17 @@ app.get('/pcorrelation/:questionId1/:questionId2', function (req,res) {
                 sumYMsq += Math.pow( parseInt(queryAnswers2[i].answer) - yMean  ,2);
             }
             var pearsonR = sumUpper / (Math.sqrt(sumXMsq) * Math.sqrt(sumYMsq));
-            res.send({
-                questionId: req.params.questionId1,
-                pearsonCoefficient: pearsonR,
-                scatterPlotValues: scatterPlotValues
-            })
+            if(pearsonR) {
+                res.send({
+                    questionId: req.params.questionId1,
+                    pearsonCoefficient: pearsonR,
+                    scatterPlotValues: scatterPlotValues
+                })
+            }
+            else {
+                res.sendStatus(400);
+            }
+
         });
     } catch (err) {
         throw err;
