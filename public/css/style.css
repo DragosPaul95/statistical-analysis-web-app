@@ -100,6 +100,9 @@ body {
 .invalidLoginDiv h4 {
     color: red;
 }
+.loginHeader, .loginPadding {
+    padding: 15px;
+}
 #stdevVal {
     margin-bottom: 10px;
 }

@@ -1,20 +1,29 @@
 <div ng-controller="loginController as vm">
-    <div class="formContainer">
-        <form name="newSurveyForm" novalidate ng-submit="vm.login(vm.user)">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">User</span>
-                    <input type="text" class="form-control" name="surveyTitle" ng-model="vm.user.username" aria-describedby="basic-addon1">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon2">Password</span>
-                    <input type="password" class="form-control" name="surveyDescription" ng-model="vm.user.password" aria-describedby="basic-addon2">
-                </div>
-            </div>
-            <button type="submit" class="btn btn-default">login</button>
-        </form>
+    <div class="formContainer loginFormDiv">
+        <md-card class="loginCard text-center  ">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="loginHeader md-headline">Login</span>
+                    <form name="loginForm" class="loginForm" novalidate ng-submit="vm.login(vm.user)">
+                        <div class="row loginPadding">
+                            <div class="col-md-4 col-md-offset-4 input-group">
+                                <span class="input-group-addon" id="basic-addon1">Username</span>
+                                <input type="text" class="form-control" name="surveyTitle" ng-model="vm.user.username" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="row loginPadding">
+                            <div class="col-md-4 col-md-offset-4 input-group">
+                                <span class="input-group-addon" id="basic-addon2">Password</span>
+                                <input type="password" class="form-control" name="surveyDescription" ng-model="vm.user.password" aria-describedby="basic-addon2">
+                            </div>
+                        </div>
+                        <div class="loginPadding row col-md-4 col-md-offset-4">
+                            <button type="submit" class="btn btn-default">login</button>
+                        </div>
+                    </form>
+                </md-card-title-text>
+            </md-card-title>
+        </md-card>
     </div>
     <div ng-if="vm.invalidAttempt" class="invalidLoginDiv">
         <h4>Wrong password!</h4>

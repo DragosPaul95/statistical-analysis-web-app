@@ -306,6 +306,7 @@
         };
 
         vm.compute_ttest = function (questionId1, questionId2) {
+            if(questionId1 == null || questionId2 == null) return;
             $http({
                 method: 'GET',
                 url: '/ttest/' + questionId1 + "/" + questionId2
