@@ -104,12 +104,16 @@
                     vm.surveyStats[questionId1].npdata.choices1.length) vm.surveyStats[questionId1].npdata.order = 1;
                 else vm.surveyStats[questionId1].npdata.order = 2;
             }, function errorCallback(response) {
-                console.log('Error: ' + response);
+                vm.surveyStats[questionId1].npdata = 400;
             });
         };
 
         vm.calculateCorrelation = function (questionId1, questionId2) {
             if(questionId1 == 999 || questionId2 == 999) return;
+            if(questionId1 === questionId2) {
+                vm.surveyStats[questionId1].pearsonCoefficient = "same";
+                return;
+            }
             var q1 = vm.survey.questions.filter(function(el){
                 return el.question_id === questionId1;
             });
@@ -156,7 +160,7 @@
                     }
                 });
             }, function errorCallback(response) {
-                console.log('Error: ' + response);
+                vm.surveyStats[questionId1].pearsonCoefficient = "cantAnalyse";
             });
         };
 
@@ -316,7 +320,7 @@
                     parseFloat(response.data.lowerTinterval).toFixed(1)/1, (parseFloat(response.data.t_val)).toFixed(1)/1, (parseFloat(response.data.upperTinterval)).toFixed(1)/1];
                 vm.makeBellCurveChart(questionId1, linesArr);
             }, function errorCallback(response) {
-                console.log('Error: ' + response);
+                vm.surveyStats[questionId1].ttestData = 400;
             });
         }
     }
