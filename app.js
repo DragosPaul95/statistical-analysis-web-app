@@ -613,6 +613,44 @@ app.post('/savesurvey', function (req, res) {
     }
 });
 
+app.post('/register', function(req, res) {
+   var post = {
+       user_email: req.body.username,
+       user_password: req.body.password
+   };
+   db.query("SELECT COUNT(*) as count FROM users WHERE user_email = ?", [req.body.username], function(err, result) {
+      if(!err) {
+          if(result[0].count > 0) {
+              res.send({
+                  status: 403,
+                  msg: "An account already exists with this e-mail address."
+              });
+          }
+          else {
+	          bcrypt.hash(post.user_password, null, null, function(err, hash) {
+		         if(!err) {
+			         db.query("INSERT INTO users(user_email, user_password_hash) VALUES(?,?)", [post.user_email, hash], function (err, result) {
+				        if(!err) {
+					        res.sendStatus(200);
+                        }
+                        else {
+				            throw err;
+                        }
+			         });
+                 }
+                 else {
+		             throw err;
+                 }
+	          });
+          }
+      }
+      else {
+        throw err;
+      }
+   });
+
+});
+
 app.post('/login', function (req, res) {
     var post = {
         user_email: req.body.username,

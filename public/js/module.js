@@ -31,6 +31,17 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
                 }
             }
         })
+        .state('register', {
+            url: '/register',
+            views:{
+                'content':{
+                    templateUrl: 'js/ng-templates/register.view.html'
+                },
+                'header':{
+                    templateUrl:'js/ng-templates/navbar.view.html'
+                }
+            }
+        })
         .state('surveyResults', {
             url: '/results',
             views:{
@@ -78,7 +89,7 @@ run.$inject = ['$rootScope', '$state', '$location', '$cookies'];
 function run($rootScope, $state, $location, $cookies) {
     $rootScope.auth = $cookies.getObject('auth') || false;
     if (!$rootScope.auth) {
-        $location.path('/login');
+        $location.path('/register');
     }
     $rootScope.currentPage = $location.path().substring(1);
 

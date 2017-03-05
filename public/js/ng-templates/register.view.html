@@ -1,0 +1,32 @@
+<div ng-controller="registerController as vm">
+
+    <div class="formContainer loginFormDiv">
+        <md-card class="loginCard text-center  ">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="loginHeader md-headline">Register</span>
+                    <form name="loginForm" class="loginForm" novalidate ng-submit="vm.register(vm.user)">
+                        <div class="row loginPadding">
+                            <div class="col-md-4 col-md-offset-4 input-group">
+                                <span class="input-group-addon" id="basic-addon1">Username</span>
+                                <input type="text" class="form-control" name="surveyTitle" ng-model="vm.user.username" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="row loginPadding">
+                            <div class="col-md-4 col-md-offset-4 input-group">
+                                <span class="input-group-addon" id="basic-addon2">Password</span>
+                                <input type="password" class="form-control" name="surveyDescription" ng-model="vm.user.password" aria-describedby="basic-addon2">
+                            </div>
+                        </div>
+                        <div class="loginPadding row col-md-4 col-md-offset-4">
+                            <button type="submit" class="btn btn-default">Register</button>
+                        </div>
+                    </form>
+                </md-card-title-text>
+            </md-card-title>
+        </md-card>
+    </div>
+    <div ng-if="vm.alreadyRegistered" class="invalidLoginDiv">
+        <h4>{{vm.alreadyRegistered}}</h4>
+    </div>
+</div>
