@@ -1,6 +1,6 @@
 <div ng-controller="resultsController as vm">
 
-    <md-content class="md-padding" layout="column" ng-repeat="survey in vm.surveys">
+    <md-content class="md-padding" layout="column" ng-if="vm.surveys" ng-repeat="survey in vm.surveys">
         <div flex-xs flex-gt-xs="50" layout="column">
             <md-card class="surveyResultsContainer">
                 <md-card-title>
@@ -16,6 +16,14 @@
                     <md-button class="md-raised" ui-sref="surveyStats({surveyID: survey.id})">View Analysis</md-button>
                     <md-button class="md-raised" ui-sref="mcanalysis({surveyID: survey.id})">Multicriterial ranking</md-button>
                 </md-card-actions>
+            </md-card>
+        </div>
+    </md-content>
+
+    <md-content class="md-padding" layout="column" ng-if="!vm.surveys">
+        <div flex-xs flex-gt-xs="50" layout="column">
+            <md-card class="surveyResultsContainer">
+                <h4>You have not created any surveys yet!</h4>
             </md-card>
         </div>
     </md-content>

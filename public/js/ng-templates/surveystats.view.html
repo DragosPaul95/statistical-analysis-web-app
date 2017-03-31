@@ -123,7 +123,7 @@
                                 <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
                             </md-select>
                         </md-input-container>
-                        <div class="correlationValue" ng-show="vm.surveyStats[question.question_id].ttestData && vm.surveyStats[question.question_id].ttestData !== 403 && question.regressionWith != 999">
+                        <div class="correlationValue" ng-show="vm.surveyStats[question.question_id].ttestData && vm.surveyStats[question.question_id].ttestData != 400 && question.regressionWith != 999">
                             <p>The computed T value is = {{vm.surveyStats[question.question_id].ttestData.t_val}}.</p>
                             <p>According to the T sig/probability table with df = <strong>{{vm.surveyStats[question.question_id].ttestData.dof}}</strong>,
                                 the absolute value of the computed T must be <strong>at least {{vm.surveyStats[question.question_id].ttestData.t_table}}</strong> in order to reach
@@ -138,7 +138,7 @@
                             </p>
                             <div id="bellcurve{{question.question_id}}" style="height: 600px;width: 100%;"></div>
                         </div>
-                        <div class="correlationValue" ng-show="vm.surveyStats[question.question_id].ttestData === 400">
+                        <div class="correlationValue" ng-show="vm.surveyStats[question.question_id].ttestData == 400">
                             <p>T Test cannot be applied to this type of question.</p>
                         </div>
 

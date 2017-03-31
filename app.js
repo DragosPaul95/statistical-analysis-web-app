@@ -19,8 +19,8 @@ app.use(bodyParser.json());
 var db = mysql.createConnection({
     //localhost if internet, 127.0.0.1 if no internet
     host     : '127.0.0.1',
-    user     : 'root',
-    password : '',
+    user     : 'dragos',
+    password : 'steaua',
     database : 'student_forms'
 });
 
@@ -543,7 +543,8 @@ app.get('*', function(req, res) {
 });
 
 app.post('/answer/:surveyID', function (req, res) {
-    var answers = req.body;
+    var data = req.body;
+    var answers = data.answers;
     Object.keys(answers).forEach(function (key) {
         var splitValues = answers[key].split(',');
         try {
@@ -551,6 +552,7 @@ app.post('/answer/:surveyID', function (req, res) {
                 for(var i = 0; i < splitValues.length; i++) {
                     var insertData = {
                         answer_question_id: key,
+                        answer_user_id: data.auth.userId,
                         answer: splitValues[i]
                     };
                     var queryAnswer = await(db.query('INSERT INTO answers SET ?', insertData, defer()));
@@ -591,7 +593,7 @@ app.post('/savesurvey', function (req, res) {
                     };
                     var questionChoices = survey.questions[i].choices;
                     var query2 = await(db.query('INSERT INTO survey_questions SET ?', questionData, defer()));
-                    if(questionData.question_type != "text") {
+                    if(questionData.question_type !== "text") {
                         for(var ii = 0; ii < questionChoices.length; ii++){
                             var choicesData = {
                                 question_id: query2.insertId,
@@ -660,7 +662,7 @@ app.post('/login', function (req, res) {
     var token = crypto.randomBytes(20).toString('hex');
     db.query("SELECT * FROM users WHERE user_email = ?", [req.body.username], function(err, result){
        if (!err) {
-           if(result[0] && result[0].user_email == post.user_email) {
+           if(result[0] && result[0].user_email === post.user_email) {
                if(bcrypt.compareSync(post.user_password, result[0].user_password_hash))  {
                    // authenticated
                    var authObj = {

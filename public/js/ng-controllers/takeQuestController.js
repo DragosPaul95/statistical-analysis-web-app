@@ -29,7 +29,7 @@
         };
 
         vm.saveAnswers = function (answers){
-            if(Object.keys(answers).length && Object.keys(answers).length == vm.survey.questions.length) {
+            if(Object.keys(answers).length && Object.keys(answers).length === vm.survey.questions.length) {
                 var answerVals = Object.values(answers);
                 for(var i = 0; i < answerVals.length; i++) {
                     if(answerVals[i] === undefined) {
@@ -37,7 +37,11 @@
                         return;
                     }
                 }
-                $http.post('/answer/' + vm.surveyID,answers)
+                var data = {
+                    auth: $rootScope.auth,
+                    answers: answers
+                };
+                $http.post('/answer/' + vm.surveyID,data)
                     .success(function(data) {
                         console.log(data);
                         vm.saveOk = true;

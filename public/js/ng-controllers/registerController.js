@@ -17,7 +17,10 @@
 						vm.alreadyRegistered = data.msg;
 						return;
 					}
-					$state.go("login");
+					vm.registerOk = true;
+					setTimeout(function () {
+                        $state.go("login");
+					}, 2000);
 
 				})
 				.error(function(data) {
