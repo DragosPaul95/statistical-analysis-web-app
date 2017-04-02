@@ -88,7 +88,7 @@ function config($locationProvider, $stateProvider, $urlRouterProvider) {
 run.$inject = ['$rootScope', '$state', '$location', '$cookies'];
 function run($rootScope, $state, $location, $cookies) {
     $rootScope.auth = $cookies.getObject('auth') || false;
-    if (!$rootScope.auth) {
+    if (!$rootScope.auth && $location.path().indexOf("/survey/")===-1 ) {
         $location.path('/register');
     }
     $rootScope.currentPage = $location.path().substring(1);
@@ -96,7 +96,7 @@ function run($rootScope, $state, $location, $cookies) {
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
         // keep user logged in after page refresh
         $rootScope.auth = $cookies.getObject('auth') || false;
-        if (!$rootScope.auth) {
+        if (!$rootScope.auth && $location.path().indexOf("/survey/")===-1 ) {
             $state.go('login');
         }
         $rootScope.currentPage = $location.path().substring(1);

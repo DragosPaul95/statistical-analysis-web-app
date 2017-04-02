@@ -38,6 +38,7 @@ app.get('/getSurvey/:surveyID', function(req, res) {
             var querySurvey = await(db.query('SELECT * FROM surveys WHERE survey_id = ?', req.params.surveyID, defer()));
             survey.title = querySurvey[0].survey_title;
             survey.description = querySurvey[0].survey_description;
+            querySurvey[0].survey_private === 0 ? survey.survey_private = false : survey.survey_private = true;
             survey.questions = [];
             var queryQuestions = await(db.query('SELECT * FROM survey_questions WHERE question_survey_id = ?', req.params.surveyID, defer()));
             for(var i = 0; i < queryQuestions.length; i++) {
@@ -545,6 +546,7 @@ app.get('*', function(req, res) {
 app.post('/answer/:surveyID', function (req, res) {
     var data = req.body;
     var answers = data.answers;
+    if(!data.auth && data.survey_private) res.sendStatus(403);
     Object.keys(answers).forEach(function (key) {
         var splitValues = answers[key].split(',');
         try {
@@ -572,7 +574,8 @@ app.post('/savesurvey', function (req, res) {
         survey_title: survey.survey_title,
         survey_description: survey.survey_description,
         survey_user_id: userAuth.userId,
-        survey_datetime: new Date()
+        survey_datetime: new Date(),
+        survey_private: survey.survey_private
     };
     try {
         fiber(function() {

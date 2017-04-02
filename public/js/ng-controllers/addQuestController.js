@@ -31,16 +31,20 @@
 
 
         vm.addSurvey = function () {
+            if(vm.survey.survey_private === undefined) {
+                vm.survey.survey_private = 0;
+            }
             var data = {
                 userAuth:  $rootScope.auth,
                 survey: vm.survey
             };
             $http.post('/savesurvey', data)
                 .success(function(data) {
-                    console.log(data);
+                   vm.saveOk = true;
                 })
                 .error(function(data) {
                     console.log('Error: ' + data);
+                    vm.saveOk = false;
                 });
         };
 

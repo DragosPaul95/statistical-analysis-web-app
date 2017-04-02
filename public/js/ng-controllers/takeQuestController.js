@@ -5,16 +5,23 @@
         .module('app')
         .controller('takeQuestController', takeQuestController);
 
-    takeQuestController.$inject = ['$rootScope', '$scope', '$http', '$stateParams'];
-    function takeQuestController($rootScope, $scope, $http, $stateParams) {
+    takeQuestController.$inject = ['$rootScope', '$scope', '$state', '$http', '$stateParams'];
+    function takeQuestController($rootScope, $scope, $state, $http, $stateParams) {
         var vm = this;
         vm.surveyID = $stateParams.surveyID;
         $http({
             method: 'GET',
             url: '/getSurvey/'+vm.surveyID
         }).then(function successCallback(response) {
-            vm.survey = response.data;
-            vm.surveyAnswers = {};
+
+            if( (response.data.survey_private && $rootScope.auth) || !response.data.survey_private) {
+                vm.survey = response.data;
+                vm.surveyAnswers = {};
+            }
+            else {
+                $state.go('login');
+            }
+
         }, function errorCallback(response) {
             console.log('Error: ' + response);
         });
@@ -39,7 +46,8 @@
                 }
                 var data = {
                     auth: $rootScope.auth,
-                    answers: answers
+                    answers: answers,
+                    survey_private: vm.survey.survey_private
                 };
                 $http.post('/answer/' + vm.surveyID,data)
                     .success(function(data) {

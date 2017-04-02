@@ -1,6 +1,13 @@
 <md-content class="md-padding fullHeight" ng-controller="addQuestController as vm">
     <form name="newSurveyForm" novalidate ng-submit="vm.addSurvey(survey)">
 
+        <div layout-gt-sm="row">
+            <div flex-gt-sm="50">
+                <md-checkbox ng-model="vm.survey.survey_private" aria-label="Privacy">
+                    Make Survey Private
+                </md-checkbox>
+            </div>
+        </div>
         <div layout-gt-sm="row" layout-align="center center">
             <md-input-container flex-gt-sm>
                 <label for="surveyTitle">Survey Title</label>
@@ -56,5 +63,11 @@
     </form>
     <div class="saveButton" layout-gt-sm="row" layout-align="center center">
         <md-button class="md-raised" ng-click="vm.addSurvey()">Save Survey</md-button>
+    </div>
+    <div class="saveOk" ng-if="vm.saveOk === true" layout-gt-sm="row" layout-align="center center">
+    <p>Survey saved successfully!</p>
+    </div>
+    <div class="saveNOk" ng-if="vm.saveOk === false" layout-gt-sm="row" layout-align="center center">
+    <p>Error saving survey. Please try again.</p>
     </div>
 </md-content>
