@@ -19,8 +19,8 @@ app.use(bodyParser.json());
 var db = mysql.createConnection({
     //localhost if internet, 127.0.0.1 if no internet
     host     : '127.0.0.1',
-    user     : 'dragos',
-    password : 'steaua',
+    user     : 'root',
+    password : '',
     database : 'student_forms'
 });
 
@@ -539,6 +539,18 @@ app.post('/surveysByUser', function(req, res) {
 
 });
 
+app.get('/user/:userID', function (req, res) {
+    try {
+        fiber(function () {
+            var query = await(db.query('SELECT * FROM users_profile WHERE user_id = ?', req.params.userID, defer()));
+            res.send(query);
+        });
+    }
+    catch (err) {
+        throw err;
+    }
+});
+
 app.get('*', function(req, res) {
     res.sendFile('public/index.html', { root: __dirname });
 });
@@ -565,6 +577,18 @@ app.post('/answer/:surveyID', function (req, res) {
         }
     });
     return res.sendStatus(200);
+});
+
+app.post('/user/:userID', function (req, res) {
+    try {
+        fiber(function () {
+            var query = await(db.query('INSERT INTO users_profile SET ?', req.body, defer()));
+            return res.send(query);
+        });
+    } catch (err) {
+        throw err;
+    }
+
 });
 
 app.post('/savesurvey', function (req, res) {
