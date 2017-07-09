@@ -154,6 +154,7 @@
                 url: '/npcorrelation/' + questionId1 + "/" + questionId2
             }).then(function successCallback(response) {
                 vm.surveyStats[questionId1].npdata = response.data;
+                vm.surveyStats[questionId1].npdata.columnTotal.pop()
                 if(vm.surveyStats[questionId1].npdata.choices2.length >
                     vm.surveyStats[questionId1].npdata.choices1.length) vm.surveyStats[questionId1].npdata.order = 1;
                 else vm.surveyStats[questionId1].npdata.order = 2;
@@ -188,12 +189,12 @@
                         "position": "bottom",
                         "axisAlpha": 0,
                         "dashLength": 1,
-                        "title": q2[0].question_text + " (x axis)"
+                        "title": q1[0].question_text + " (x axis)"
                     }, {
                         "axisAlpha": 0,
                         "dashLength": 1,
                         "position": "left",
-                        "title": q1[0].question_text + " (y axis)"
+                        "title": q2[0].question_text + " (y axis)"
                     }],
                     "startDuration": 1,
                     "graphs": [{
@@ -236,12 +237,13 @@
                 vm.regressionEqString += " * X";
                 vm.surveyStats[response.data.questionId].regression.a = response.data.a.toFixed(4);
                 vm.surveyStats[response.data.questionId].regression.b = response.data.b.toFixed(4);
+                vm.surveyStats[response.data.questionId].regression.r = response.data.r.toFixed(4);
+                vm.surveyStats[response.data.questionId].regression.r2 = response.data.r2.toFixed(4);
 
                 var regressionWithQ = vm.survey.questions.filter(function(el){
                     return el.question_id === questionId2;
                 });
                 vm.surveyStats[response.data.questionId].regression.regressionWithText = regressionWithQ[0].question_text;
-                console.log(vm.test);
             }, function errorCallback(response) {
                 console.log('Error: ' + response);
             });
