@@ -10,6 +10,51 @@
         var vm = this;
         vm.surveyID = $stateParams.surveyID;
 
+        vm.makeASLChart = function (type, data) {
+            vm.amChartOptions[response.data.question_id] = {
+                "type": "pie",
+                "startDuration": 0,
+                "theme": "light",
+                "addClassNames": true,
+                "legend":{
+                    "position":"right",
+                    "marginRight":100,
+                    "autoMargins":false,
+                    "valueText": "[[value]]" + valueText
+                },
+                "innerRadius": "30%",
+                "defs": {
+                    "filter": [{
+                        "id": "shadow",
+                        "width": "200%",
+                        "height": "200%",
+                        "feOffset": {
+                            "result": "offOut",
+                            "in": "SourceAlpha",
+                            "dx": 0,
+                            "dy": 0
+                        },
+                        "feGaussianBlur": {
+                            "result": "blurOut",
+                            "in": "offOut",
+                            "stdDeviation": 5
+                        },
+                        "feBlend": {
+                            "in": "SourceGraphic",
+                            "in2": "blurOut",
+                            "mode": "normal"
+                        }
+                    }]
+                },
+                "data": vm.questionsStats.answers,
+                "valueField": valueField,
+                "titleField": "option",
+                "export": {
+                    "enabled": true
+                }
+            };
+        };
+
         vm.makeChart = function (response) {
             var valueField;
             var valueText = "";
@@ -61,6 +106,7 @@
                 }
             };
         };
+
         $http({
             method: 'GET',
             url: '/getSurvey/' + vm.surveyID
@@ -88,6 +134,14 @@
                     console.log('Error: ' + response);
                 });
             }
+            $http({
+                method: 'POST',
+                url: "/aslData/" + vm.surveyID
+            }).then(function successCallback(response) {
+               vm.surveyStats.aslData = response.data;
+            }, function errorCallback(response) {
+                alert("err");
+            });
 
         }, function errorCallback(response) {
             console.log('Error: ' + response);

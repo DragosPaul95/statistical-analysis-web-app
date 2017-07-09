@@ -13,84 +13,176 @@
                     </md-card-title-text>
                 </md-card-title>
                 <div style="height: 600px; width: 100%;" ng-if="vm.amChartOptions[question.question_id]">
-                    <am-chart id="chart{{question.question_id}}" options="vm.amChartOptions[question.question_id]"></am-chart>
+                    <am-chart id="chart{{question.question_id}}"
+                              options="vm.amChartOptions[question.question_id]"></am-chart>
                 </div>
                 <div class="questionStatsDiv">
-                    <p id="stdevVal">Standard Deviation: <strong>{{vm.surveyStats[question.question_id].stdev}}</strong></p>
+                    <p id="stdevVal">Standard Deviation: <strong>{{vm.surveyStats[question.question_id].stdev}}</strong>
+                    </p>
                     <md-divider></md-divider>
                     <div class="correlationDiv">
                         <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
                             <label>View parametric correlation with question: </label>
-                            <md-select ng-change="vm.calculateCorrelation(question.question_id, question.pcorrelationWith)" ng-model="question.pcorrelationWith">
+                            <md-select
+                                    ng-change="vm.calculateCorrelation(question.question_id, question.pcorrelationWith)"
+                                    ng-model="question.pcorrelationWith">
                                 <md-option ng-value="999"></md-option>
-                                <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
+                                <md-option ng-value="question.question_id"
+                                           ng-repeat="question in vm.survey.questions track by $index">
+                                    {{question.question_text}}
+                                </md-option>
                             </md-select>
                         </md-input-container>
-                        <div class="correlationValue" ng-show="vm.surveyStats[question.question_id].pearsonCoefficient && vm.surveyStats[question.question_id].pearsonCoefficient!=='same' && vm.surveyStats[question.question_id].pearsonCoefficient!=='cantAnalyse' && question.pcorrelationWith != 999">
-                            <p>The Pearson correlation coefficient with the selected question is: <strong>{{vm.surveyStats[question.question_id].pearsonCoefficient}}</strong></p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == -1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect downhill (negative) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient > -1 && vm.surveyStats[question.question_id].pearsonCoefficient < -0.7">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a strong downhill (negative) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient > -0.7 && vm.surveyStats[question.question_id].pearsonCoefficient < -0.3">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a moderate downhill (negative) relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >-0.3 && vm.surveyStats[question.question_id].pearsonCoefficient<0">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a weak downhill (negative) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 0">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is no linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0 && vm.surveyStats[question.question_id].pearsonCoefficient< 0.3">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a weak uphill (positive) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.3 && vm.surveyStats[question.question_id].pearsonCoefficient<0.7">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a moderate uphill (positive) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.7 && vm.surveyStats[question.question_id].pearsonCoefficient<1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect downhill (positive) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 1">A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies that there is a perfect uphill (positive) linear relationship between the answers of the two selected questions.</p>
+                        <div class="correlationValue"
+                             ng-show="vm.surveyStats[question.question_id].pearsonCoefficient && vm.surveyStats[question.question_id].pearsonCoefficient!=='same' && vm.surveyStats[question.question_id].pearsonCoefficient!=='cantAnalyse' && question.pcorrelationWith != 999">
+                            <p>The Pearson correlation coefficient with the selected question is: <strong>{{vm.surveyStats[question.question_id].pearsonCoefficient}}</strong>
+                            </p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == -1">A Pearson
+                                Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies
+                                that there is a perfect downhill (negative) linear relationship between the answers of
+                                the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient > -1 && vm.surveyStats[question.question_id].pearsonCoefficient < -0.7">
+                                A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}}
+                                signifies that there is a strong downhill (negative) linear relationship between the
+                                answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient > -0.7 && vm.surveyStats[question.question_id].pearsonCoefficient < -0.3">
+                                A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}}
+                                signifies that there is a moderate downhill (negative) relationship between the answers
+                                of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >-0.3 && vm.surveyStats[question.question_id].pearsonCoefficient<0">
+                                A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}}
+                                signifies that there is a weak downhill (negative) linear relationship between the
+                                answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 0">A Pearson
+                                Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies
+                                that there is no linear relationship between the answers of the two selected
+                                questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0 && vm.surveyStats[question.question_id].pearsonCoefficient< 0.3">
+                                A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}}
+                                signifies that there is a weak uphill (positive) linear relationship between the answers
+                                of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.3 && vm.surveyStats[question.question_id].pearsonCoefficient<0.7">
+                                A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}}
+                                signifies that there is a moderate uphill (positive) linear relationship between the
+                                answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient >0.7 && vm.surveyStats[question.question_id].pearsonCoefficient<1">
+                                A Pearson Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}}
+                                signifies that there is a perfect downhill (positive) linear relationship between the
+                                answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].pearsonCoefficient == 1">A Pearson
+                                Coefficient of {{vm.surveyStats[question.question_id].pearsonCoefficient}} signifies
+                                that there is a perfect uphill (positive) linear relationship between the answers of the
+                                two selected questions.</p>
                             <div id="chartdiv{{question.question_id}}" style="height: 400px;width: 100%;"></div>
                         </div>
-                        <div class="correlationValue" ng-show="vm.surveyStats[question.question_id].pearsonCoefficient === 'same'">
-                            <p>The value for the Pearson Correlation Coefficient will <strong>always</strong> be equal to 1 when comparing the same set of data (or question).</p>
+                        <div class="correlationValue"
+                             ng-show="vm.surveyStats[question.question_id].pearsonCoefficient === 'same'">
+                            <p>The value for the Pearson Correlation Coefficient will <strong>always</strong> be equal
+                                to 1 when comparing the same set of data (or question).</p>
                         </div>
-                        <div class="correlationValue" ng-show="vm.surveyStats[question.question_id].pearsonCoefficient === 'cantAnalyse'">
+                        <div class="correlationValue"
+                             ng-show="vm.surveyStats[question.question_id].pearsonCoefficient === 'cantAnalyse'">
                             <p>A parametric correlation analysis can not be performed on this type of data.</p>
                         </div>
                     </div>
                     <div class="correlationDiv">
                         <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
                             <label>View non-parametric correlation with question: </label>
-                            <md-select ng-change="vm.calculateNpCorrelation(question.question_id, question.npcorrelationWith)" ng-model="question.npcorrelationWith">
+                            <md-select
+                                    ng-change="vm.calculateNpCorrelation(question.question_id, question.npcorrelationWith)"
+                                    ng-model="question.npcorrelationWith">
                                 <md-option ng-value="999"></md-option>
-                                <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
+                                <md-option ng-value="question.question_id"
+                                           ng-repeat="question in vm.survey.questions track by $index">
+                                    {{question.question_text}}
+                                </md-option>
                             </md-select>
                         </md-input-container>
-                        <div class="npcorrelationValue" ng-if="vm.surveyStats[question.question_id].npdata && vm.surveyStats[question.question_id].npdata!== 400 && question.npcorrelationWith != 999">
+                        <div class="npcorrelationValue"
+                             ng-if="vm.surveyStats[question.question_id].npdata && vm.surveyStats[question.question_id].npdata!== 400 && question.npcorrelationWith != 999">
                             <h4>Table with answer structure</h4>
                             <table class="table table-bordered">
                                 <thead class="thead-default">
                                 <tr>
                                     <th></th>
-                                    <th ng-if="vm.surveyStats[question.question_id].npdata.order == 2" ng-repeat="choice in vm.surveyStats[question.question_id].npdata.choices2 track by $index">{{choice.choice_label}}</th>
-                                    <th ng-if="vm.surveyStats[question.question_id].npdata.order == 1" ng-repeat="choice in vm.surveyStats[question.question_id].npdata.choices1 track by $index">{{choice.choice_label}}</th>
+                                    <th ng-if="vm.surveyStats[question.question_id].npdata.order == 2"
+                                        ng-repeat="choice in vm.surveyStats[question.question_id].npdata.choices2 track by $index">
+                                        {{choice.choice_label}}
+                                    </th>
+                                    <th ng-if="vm.surveyStats[question.question_id].npdata.order == 1"
+                                        ng-repeat="choice in vm.surveyStats[question.question_id].npdata.choices1 track by $index">
+                                        {{choice.choice_label}}
+                                    </th>
                                     <th>total</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="row in vm.surveyStats[question.question_id].npdata.resultMatrix track by $index">
-                                    <td ng-if="vm.surveyStats[question.question_id].npdata.order == 2" >{{vm.surveyStats[question.question_id].npdata.choices1[$index].choice_label}}</td>
-                                    <td ng-if="vm.surveyStats[question.question_id].npdata.order == 1" >{{vm.surveyStats[question.question_id].npdata.choices2[$index].choice_label}}</td>
+                                    <td ng-if="vm.surveyStats[question.question_id].npdata.order == 2">
+                                        {{vm.surveyStats[question.question_id].npdata.choices1[$index].choice_label}}
+                                    </td>
+                                    <td ng-if="vm.surveyStats[question.question_id].npdata.order == 1">
+                                        {{vm.surveyStats[question.question_id].npdata.choices2[$index].choice_label}}
+                                    </td>
                                     <td ng-repeat="cell in row track by $index">
-                                        {{cell}} ({{vm.surveyStats[question.question_id].npdata.theoreticalMatrix[$parent.$index][$index]}})
+                                        {{cell}}
+                                        ({{vm.surveyStats[question.question_id].npdata.theoreticalMatrix[$parent.$index][$index]}})
                                     </td>
                                     <td>{{vm.surveyStats[question.question_id].npdata.lineTotal[$index]}}</td>
                                 </tr>
                                 <tr>
                                     <td>total</td>
-                                    <td ng-repeat="value in vm.surveyStats[question.question_id].npdata.columnTotal track by $index">{{value}}</td>
+                                    <td ng-repeat="value in vm.surveyStats[question.question_id].npdata.columnTotal track by $index">
+                                        {{value}}
+                                    </td>
                                     <td>{{vm.surveyStats[question.question_id].npdata.totalVal}}</td>
                                 </tr>
                                 </tbody>
                             </table>
-                            <h4 style="margin-top: 25px;">The computed Cramer's correlation coefficient V = {{vm.surveyStats[question.question_id].npdata.cramerCoeff}}</h4>
-                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff == -1">A Cramer's correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a perfect downhill (negative) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff > -1 && vm.surveyStats[question.question_id].npdata.cramerCoeff < -0.7">A Cramer's correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a strong downhill (negative) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff > -0.7 && vm.surveyStats[question.question_id].npdata.cramerCoeff < -0.3">A Cramer's correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a moderate downhill (negative) relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff >-0.3 && vm.surveyStats[question.question_id].npdata.cramerCoeff<0">A Cramer's correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a weak downhill (negative) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff == 0">A Cramer's correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is no linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff >0 && vm.surveyStats[question.question_id].npdata.cramerCoeff< 0.3">A Cramer's correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a weak uphill (positive) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff >0.3 && vm.surveyStats[question.question_id].npdata.cramerCoeff<0.7">A Cramer's correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a moderate uphill (positive) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff >0.7 && vm.surveyStats[question.question_id].npdata.cramerCoeff<1">A Cramer's correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a perfect downhill (negative) linear relationship between the answers of the two selected questions.</p>
-                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff == 1">A Cramer's correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a perfect uphill (positive) linear relationship between the answers of the two selected questions.</p>
+                            <h4 style="margin-top: 25px;">The computed Cramer's correlation coefficient V =
+                                {{vm.surveyStats[question.question_id].npdata.cramerCoeff}}</h4>
+                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff == -1">A Cramer's
+                                correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}}
+                                signifies that there is a perfect downhill (negative) linear relationship between the
+                                answers of the two selected questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff > -1 && vm.surveyStats[question.question_id].npdata.cramerCoeff < -0.7">
+                                A Cramer's correlation coefficient V of
+                                {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a
+                                strong downhill (negative) linear relationship between the answers of the two selected
+                                questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff > -0.7 && vm.surveyStats[question.question_id].npdata.cramerCoeff < -0.3">
+                                A Cramer's correlation coefficient V of
+                                {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a
+                                moderate downhill (negative) relationship between the answers of the two selected
+                                questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff >-0.3 && vm.surveyStats[question.question_id].npdata.cramerCoeff<0">
+                                A Cramer's correlation coefficient V of
+                                {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a
+                                weak downhill (negative) linear relationship between the answers of the two selected
+                                questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff == 0">A Cramer's
+                                correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}}
+                                signifies that there is no linear relationship between the answers of the two selected
+                                questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff >0 && vm.surveyStats[question.question_id].npdata.cramerCoeff< 0.3">
+                                A Cramer's correlation coefficient V of
+                                {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a
+                                weak uphill (positive) linear relationship between the answers of the two selected
+                                questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff >0.3 && vm.surveyStats[question.question_id].npdata.cramerCoeff<0.7">
+                                A Cramer's correlation coefficient V of
+                                {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a
+                                moderate uphill (positive) linear relationship between the answers of the two selected
+                                questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff >0.7 && vm.surveyStats[question.question_id].npdata.cramerCoeff<1">
+                                A Cramer's correlation coefficient V of
+                                {{vm.surveyStats[question.question_id].npdata.cramerCoeff}} signifies that there is a
+                                perfect downhill (negative) linear relationship between the answers of the two selected
+                                questions.</p>
+                            <p ng-if="vm.surveyStats[question.question_id].npdata.cramerCoeff == 1">A Cramer's
+                                correlation coefficient V of {{vm.surveyStats[question.question_id].npdata.cramerCoeff}}
+                                signifies that there is a perfect uphill (positive) linear relationship between the
+                                answers of the two selected questions.</p>
                         </div>
                         <div class="npcorrelationValue" ng-if="vm.surveyStats[question.question_id].npdata === 400">
                             A non-parametric correlation analysis can not be performed on this type of data.
@@ -100,40 +192,62 @@
                     <div class="regressionDiv">
                         <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
                             <label>Calculate linear regression with question: </label>
-                            <md-select ng-change="vm.calculateRegression(question.question_id, question.regressionWith)" ng-model="question.regressionWith">
+                            <md-select ng-change="vm.calculateRegression(question.question_id, question.regressionWith)"
+                                       ng-model="question.regressionWith">
                                 <md-option ng-value="999"></md-option>
-                                <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
+                                <md-option ng-value="question.question_id"
+                                           ng-repeat="question in vm.survey.questions track by $index">
+                                    {{question.question_text}}
+                                </md-option>
                             </md-select>
                         </md-input-container>
-                        <div class="correlationValue" ng-if="vm.surveyStats[question.question_id].regression && question.regressionWith != 999">
+                        <div class="correlationValue"
+                             ng-if="vm.surveyStats[question.question_id].regression && question.regressionWith != 999">
                             <p>Computed linear regression equation: <strong>{{vm.regressionEqString}}</strong></p>
                             <md-input-container>
                                 <label>Predict Y value when X =</label>
-                                <input ng-model="vm.surveyStats[question.question_id].regression.predictX" ng-blur="vm.calculateRegressionPrediction(question.question_id, vm.surveyStats[question.question_id].regression.predictX)">
+                                <input ng-model="vm.surveyStats[question.question_id].regression.predictX"
+                                       ng-blur="vm.calculateRegressionPrediction(question.question_id, vm.surveyStats[question.question_id].regression.predictX)">
                             </md-input-container>
-                            <p ng-if="vm.surveyStats[question.question_id].regression.predictedY"><strong>Using the Least Squares Method, for an X ({{question.question_text}}) value of {{vm.surveyStats[question.question_id].regression.predictX}}
-                                , the predicted Y ({{vm.surveyStats[question.question_id].regression.regressionWithText}}) value is equal to: {{ vm.surveyStats[question.question_id].regression.predictedY }}</strong></p>
+                            <p ng-if="vm.surveyStats[question.question_id].regression.predictedY">
+                            <strong>Using the
+                                Least Squares Method, for an X ({{question.question_text}}) value of
+                                {{vm.surveyStats[question.question_id].regression.predictX}}
+                                , the predicted Y
+                                ({{vm.surveyStats[question.question_id].regression.regressionWithText}}) value is equal
+                                to: {{ vm.surveyStats[question.question_id].regression.predictedY }}</strong></p>
                         </div>
                     </div>
                     <div class="ttestDiv">
                         <md-input-container class="md-block fixSelectAlign" flex-gt-sm>
                             <label>Compute T Test with question: </label>
-                            <md-select ng-change="vm.compute_ttest(question.question_id, question.ttestWith)" ng-model="question.ttestWith">
+                            <md-select ng-change="vm.compute_ttest(question.question_id, question.ttestWith)"
+                                       ng-model="question.ttestWith">
                                 <md-option ng-value="999"></md-option>
-                                <md-option ng-value="question.question_id" ng-repeat="question in vm.survey.questions track by $index">{{question.question_text}}</md-option>
+                                <md-option ng-value="question.question_id"
+                                           ng-repeat="question in vm.survey.questions track by $index">
+                                    {{question.question_text}}
+                                </md-option>
                             </md-select>
                         </md-input-container>
-                        <div class="correlationValue" ng-show="vm.surveyStats[question.question_id].ttestData && vm.surveyStats[question.question_id].ttestData != 400 && question.regressionWith != 999">
+                        <div class="correlationValue"
+                             ng-show="vm.surveyStats[question.question_id].ttestData && vm.surveyStats[question.question_id].ttestData != 400 && question.regressionWith != 999">
                             <p>The computed T value is = {{vm.surveyStats[question.question_id].ttestData.t_val}}.</p>
                             <p>According to the T sig/probability table with df = <strong>{{vm.surveyStats[question.question_id].ttestData.dof}}</strong>,
-                                the absolute value of the computed T must be <strong>at least {{vm.surveyStats[question.question_id].ttestData.t_table}}</strong> in order to reach
+                                the absolute value of the computed T must be <strong>at least
+                                    {{vm.surveyStats[question.question_id].ttestData.t_table}}</strong> in order to
+                                reach
                                 a significance level p < .05</p>
                             <p ng-if="vm.surveyStats[question.question_id].ttestData.t_valAbs>vm.surveyStats[question.question_id].ttestData.t_table">
-                                Computed absolute value of T = {{vm.surveyStats[question.question_id].ttestData.t_valAbs}} > Table T = {{vm.surveyStats[question.question_id].ttestData.t_table}}
+                                Computed absolute value of T =
+                                {{vm.surveyStats[question.question_id].ttestData.t_valAbs}} > Table T =
+                                {{vm.surveyStats[question.question_id].ttestData.t_table}}
                                 which means that this difference <strong>is</strong> statistically significant.
                             </p>
                             <p ng-if="vm.surveyStats[question.question_id].ttestData.t_valAbs<vm.surveyStats[question.question_id].ttestData.t_table">
-                                Computed absolute value of T = {{vm.surveyStats[question.question_id].ttestData.t_valAbs}} < Table T = {{vm.surveyStats[question.question_id].ttestData.t_table}}
+                                Computed absolute value of T =
+                                {{vm.surveyStats[question.question_id].ttestData.t_valAbs}} < Table T =
+                                {{vm.surveyStats[question.question_id].ttestData.t_table}}
                                 which means that this difference <strong>is NOT</strong> statistically significant.
                             </p>
                             <div id="bellcurve{{question.question_id}}" style="height: 600px;width: 100%;"></div>
@@ -145,9 +259,16 @@
                     </div>
 
 
-                    </div>
                 </div>
-            </md-card>
         </div>
+        <div style="height: 600px; width: 100%;" ng-if="vm.amChartOptions[question.question_id]">
+            <am-chart id="chart{{question.question_id}}"
+                      options="vm.amChartOptions[question.question_id]"></am-chart>
+        </div>
+        <div style="height: 600px; width: 100%;" ng-if="vm.amChartOptions[question.question_id]">
+            <am-chart id="chart{{question.question_id}}"
+                      options="vm.amChartOptions[question.question_id]"></am-chart>
+        </div>
+        </md-card>
     </md-content>
 </div>
