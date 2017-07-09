@@ -134,14 +134,14 @@
                     console.log('Error: ' + response);
                 });
             }
-            $http({
+            /*$http({
                 method: 'POST',
                 url: "/aslData/" + vm.surveyID
             }).then(function successCallback(response) {
                vm.surveyStats.aslData = response.data;
             }, function errorCallback(response) {
                 alert("err");
-            });
+            });*/
 
         }, function errorCallback(response) {
             console.log('Error: ' + response);
