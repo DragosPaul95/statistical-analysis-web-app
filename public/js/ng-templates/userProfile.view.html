@@ -42,6 +42,8 @@
 				<div layout="row">
 					<md-button class="md-raised md-primary" ng-click="editProfile(user)">SAVE</md-button>
 				</div>
+                <p style="font-weight: 700; font-size: 16px;color:#21c321;" ng-if="ok">Datele au fost actualizate cu succes.</p>
+                <p style="font-weight: 700; font-size: 16px;color:red;" ng-if="ok === false">A aparut o eroare la salvarea datelor.</p>
             </md-card>
         </div>
     </md-content>

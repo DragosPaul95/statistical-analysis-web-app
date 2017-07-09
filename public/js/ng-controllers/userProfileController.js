@@ -25,9 +25,9 @@
                 url: "/user/" + $rootScope.auth.userId,
                 data: user
             }).then(function successCallback(response) {
-                alert("ok");
+                $scope.ok = true;
             }, function errorCallback(response) {
-                alert("err");
+                $scope.ok = false;
             });
         }
     }

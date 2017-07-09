@@ -600,7 +600,15 @@ app.post('/answer/:surveyID', function (req, res) {
 app.post('/user/:userID', function (req, res) {
     try {
         fiber(function () {
-            var query = await(db.query('INSERT INTO users_profile SET ?', req.body, defer()));
+            var queryCheck = await(db.query('SELECT * FROM users_profile WHERE user_id = ?', req.params.userID, defer()));
+            var query;
+            if(queryCheck && queryCheck.length === 1) {
+                query = await(db.query('UPDATE users_profile SET ? WHERE user_id = ?', [req.body, req.params.userID], defer()));
+            }
+            else {
+                query = await(db.query('INSERT INTO users_profile SET ?', req.body, defer()));
+
+            }
             return res.send(query);
         });
     } catch (err) {
