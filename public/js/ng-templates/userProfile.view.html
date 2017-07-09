@@ -1,0 +1,50 @@
+﻿<div ng-controller="userProfileController as vm">
+
+    <md-content class="md-padding" layout="column" >
+        <div flex-xs flex-gt-xs="50" layout="column">
+            <md-card style="padding: 15px" class="surveyResultsContainer">
+                <md-card-title>
+                    <md-card-title-text>
+                        <span class="md-headline">My Profile</span>
+                    </md-card-title-text>
+                </md-card-title>
+                <div layout="row">
+                    <md-input-container flex>
+                        <label>First Name</label>
+                        <input type="text" ng-model="user.user_firstName">
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>Last Name</label>
+                        <input type="text" ng-model="user.user_lastName">
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>Age</label>
+                        <input type="number" ng-model="user.user_age">
+                    </md-input-container>
+				</div>
+				<div layout="row">
+					<md-input-container>
+						<label>Sex</label>
+                        <md-select ng-model="user.user_sex">
+                            <md-option value="0">Male</md-option>
+                            <md-option value="1">Female</md-option>
+                        </md-select>
+					</md-input-container>
+                    <md-input-container flex>
+                        <label>City</label>
+                        <input type="text" ng-model="user.user_county">
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>County</label>
+                        <input type="text" ng-model="user.user_city">
+                    </md-input-container>
+				</div>
+				<div layout="row">
+					<md-button class="md-raised md-primary" ng-click="editProfile(user)">SAVE</md-button>
+				</div>
+            </md-card>
+        </div>
+    </md-content>
+
+   
+</div>
